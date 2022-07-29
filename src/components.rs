@@ -64,7 +64,7 @@ pub fn get_game_state() -> GameState {
     srand(TETROMINO_SEED);
     let next = spawner::random_tetrominos(&tetrominos, 10);
     let mut current = spawner::random_tetromino(&tetrominos);
-    current.pos = vec2(f32::floor((5 - current.width) as f32), 22.0);
+    current.pos = vec2(f32::floor(5.0 - current.width as f32 / 2.0), 22.0);
     GameState {
         scl: 0.0,
         placed_blocks: vec![None; (WELL_WIDTH * WELL_HEIGHT) as usize],

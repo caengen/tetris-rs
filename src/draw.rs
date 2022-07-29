@@ -1,4 +1,4 @@
-use macroquad::prelude::{clear_background, draw_rectangle, Vec2, BLACK, WHITE};
+use macroquad::prelude::{clear_background, draw_rectangle, draw_text, Vec2, BLACK, BLUE, WHITE};
 
 use crate::components::{GameState, Tetromino3, WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT, WELL_WIDTH};
 
@@ -22,17 +22,10 @@ pub fn draw_current(scl: f32, current: &Tetromino3) {
     let w = (WELL_CELL - WELL_CELL_GAP) * scl;
     for r in 0..3 {
         for c in 0..3 {
-            if current.mat.row(r)[c] == 1.0
-                && (x as usize + r) < WELL_WIDTH
-                && (y as usize + c) < WELL_HEIGHT
-            {
-                draw_rectangle(
-                    (x as usize + r) as f32 * scl,
-                    (y as usize + c) as f32 * scl,
-                    w,
-                    w,
-                    current.color,
-                );
+            let dx = x + r as f32;
+            let dy = WELL_HEIGHT as f32 - (y + c as f32);
+            if current.mat.row(r)[c] == 1.0 && dx > 0.0 && dy >= 0.0 {
+                draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
             }
         }
     }
@@ -43,4 +36,12 @@ pub fn draw(gs: &GameState) {
 
     draw_well(gs.scl);
     draw_current(gs.scl, &gs.current);
+
+    draw_text(
+        format!("{} {}", gs.current.pos.x, gs.current.pos.y).as_str(),
+        240.0,
+        290.0,
+        15.0,
+        BLUE,
+    );
 }
