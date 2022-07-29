@@ -16,7 +16,7 @@ pub fn draw_well(scl: f32) {
     }
 }
 
-pub fn draw_current(scl: f32, current: &Tetromino3) {
+pub fn draw_tetromino(scl: f32, current: &Tetromino3) {
     let x = current.pos.x;
     let y = current.pos.y;
     let w = (WELL_CELL - WELL_CELL_GAP) * scl;
@@ -24,7 +24,7 @@ pub fn draw_current(scl: f32, current: &Tetromino3) {
         for c in 0..3 {
             let dx = x + r as f32;
             let dy = WELL_HEIGHT as f32 - (y + c as f32);
-            if current.mat.row(r)[c] == 1.0 && dx > 0.0 && dy >= 0.0 {
+            if current.mat.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
                 draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
             }
         }
@@ -35,7 +35,7 @@ pub fn draw(gs: &GameState) {
     clear_background(BLACK);
 
     draw_well(gs.scl);
-    draw_current(gs.scl, &gs.current);
+    draw_tetromino(gs.scl, &gs.current);
 
     draw_text(
         format!("{} {}", gs.current.pos.x, gs.current.pos.y).as_str(),

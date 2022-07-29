@@ -2,8 +2,10 @@ use macroquad::prelude::*;
 mod components;
 use components::*;
 mod draw;
-use draw::*;
 mod spawner;
+use draw::*;
+mod input;
+use input::*;
 
 fn update(gs: &mut GameState) {
     let time = get_time();
@@ -27,6 +29,7 @@ async fn main() {
         gs.scl = screen_height() / UNITS;
 
         // handle_input(&mut gs);
+        input(&mut gs);
         update(&mut gs);
         draw(&gs);
 
