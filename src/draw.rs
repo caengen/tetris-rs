@@ -3,7 +3,9 @@ use macroquad::prelude::{
     RED, WHITE,
 };
 
-use crate::components::{GameState, Tetromino3, WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT, WELL_WIDTH};
+use crate::components::{
+    Block, GameState, Tetromino3, WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT, WELL_WIDTH,
+};
 
 pub fn draw_well(scl: f32) {
     for ht in 0..WELL_HEIGHT {
@@ -40,11 +42,27 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino3) {
     }
 }
 
+fn draw_placed(scl: f32, placed: &Vec<Option<Block>>) {
+    let w = (WELL_CELL - WELL_CELL_GAP) * scl;
+    for (idx, block) in placed.iter().enumerate() {
+        match block {
+            Some(block) => {
+                let x = idx as usize % WELL_WIDTH;
+                let y = WELL_HEIGHT - (idx as usize / WELL_WIDTH);
+
+                draw_rectangle(x as f32 * scl, y as f32 * scl, w, w, block.color);
+            }
+            _ => {}
+        }
+    }
+}
+
 pub fn draw(gs: &GameState) {
     clear_background(BLACK);
 
     draw_well(gs.scl);
     draw_tetromino(gs.scl, &gs.current);
+    draw_placed(gs.scl, &gs.placed_blocks);
 
     draw_text(
         format!("{} {}", gs.current.pos.x, gs.current.pos.y).as_str(),

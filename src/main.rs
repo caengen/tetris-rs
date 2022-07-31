@@ -19,7 +19,7 @@ fn update(gs: &mut GameState) {
         let points = gs.current.relative_points(&gs.current.pos);
 
         for p in points.iter() {
-            gs.placed_blocks[xy_idx(p.x, p.y)] = Some(Block {
+            gs.placed_blocks[xy_idx(p.x, WELL_HEIGHT as f32 - p.y)] = Some(Block {
                 color: gs.current.color,
             });
         }
