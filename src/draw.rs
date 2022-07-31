@@ -1,6 +1,6 @@
 use macroquad::prelude::{
-    clear_background, draw_circle, draw_rectangle, draw_text, Vec2, BLACK, BLUE, GREEN, ORANGE,
-    RED, WHITE,
+    clear_background, draw_circle, draw_rectangle, draw_text, Vec2, BLACK, BLUE, GREEN, PINK, RED,
+    WHITE,
 };
 
 use crate::components::{
@@ -32,7 +32,7 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino3) {
             if current.mat.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
                 draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
             } else {
-                draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, ORANGE);
+                draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, PINK);
             }
         }
     }
@@ -48,7 +48,7 @@ fn draw_placed(scl: f32, placed: &Vec<Option<Block>>) {
         match block {
             Some(block) => {
                 let x = idx as usize % WELL_WIDTH;
-                let y = WELL_HEIGHT - (idx as usize / WELL_WIDTH);
+                let y = idx as usize / WELL_WIDTH;
 
                 draw_rectangle(x as f32 * scl, y as f32 * scl, w, w, block.color);
             }

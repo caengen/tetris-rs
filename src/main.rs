@@ -1,4 +1,4 @@
-use collision::bottom_collision;
+use collision::{block_collision, bottom_collision};
 use macroquad::prelude::*;
 mod components;
 use components::*;
@@ -14,12 +14,13 @@ pub fn xy_idx(x: f32, y: f32) -> usize {
 }
 
 fn update(gs: &mut GameState) {
-    if bottom_collision(&gs.current, &gs.current.pos) {
-        debug!("ding ding");
+    if bottom_collision(&gs.current, &gs.current.pos)
+        || block_collision(&gs.placed_blocks, &gs.current, &gs.current.pos)
+    {
         let points = gs.current.relative_points(&gs.current.pos);
 
         for p in points.iter() {
-            gs.placed_blocks[xy_idx(p.x, WELL_HEIGHT as f32 - p.y)] = Some(Block {
+            gs.placed_blocks[xy_idx(p.x, p.y)] = Some(Block {
                 color: gs.current.color,
             });
         }
