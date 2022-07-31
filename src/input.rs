@@ -1,6 +1,8 @@
-use macroquad::prelude::{get_last_key_pressed, mat3, vec3, KeyCode, Mat3, Quat};
+use macroquad::prelude::{
+    get_time, is_key_down, is_key_pressed, mat3, vec2, vec3, KeyCode, Mat3, Quat,
+};
 
-use super::{GameState, WELL_WIDTH};
+use super::{collision, GameState, UPDATE_TIMEOUT, WELL_WIDTH};
 
 pub fn mat3_clockwise_rot(m_a: &Mat3) -> Mat3 {
     let col = m_a.to_cols_array();
@@ -10,6 +12,7 @@ pub fn mat3_clockwise_rot(m_a: &Mat3) -> Mat3 {
 
     m_b
 }
+/*
 pub fn mat3_counter_clockwise_rot(m_a: &Mat3) -> Mat3 {
     let col = m_a.to_cols_array();
     let m_b = Mat3::from_cols_array(&[
@@ -18,31 +21,32 @@ pub fn mat3_counter_clockwise_rot(m_a: &Mat3) -> Mat3 {
 
     m_b
 }
-
+ */
 pub fn input(gs: &mut GameState) {
-    let key = get_last_key_pressed();
-    let q = Quat::from_axis_angle(vec3(1.0, 0.0, 0.0), f32::to_radians(90.0));
-    // const clockwise: Mat3 = Quat {
-
-    // }
-    //     [f32::cos(90.0), -f32::sin(90.0), 0.0],
-    //     [f32::sin(90.0), f32::cos(90.0), 0.0],
-    //     [0.0, 0.0, 1.0]
-    // );
-
-    match key {
-        Some(KeyCode::Left) => {
-            if gs.current.pos.x > 0.0 {
-                gs.current.pos.x -= 1.0;
-            }
+    let time = get_time();
+    if is_key_pressed(KeyCode::Left) {
+        let new_pos = vec2(gs.current.pos.x - 1.0, gs.current.pos.y);
+        if !collision::well_collision(&gs.current, &new_pos) {
+            gs.current.pos = new_pos;
         }
-        Some(KeyCode::Right) => {
-            if gs.current.pos.x < WELL_WIDTH as f32 {
-                gs.current.pos.x += 1.0;
-            }
+    }
+    if is_key_pressed(KeyCode::Right) {
+        let new_pos = vec2(gs.current.pos.x + 1.0, gs.current.pos.y);
+        if !collision::well_collision(&gs.current, &new_pos) {
+            gs.current.pos = new_pos;
         }
-        Some(KeyCode::Up) => gs.current.mat = mat3_counter_clockwise_rot(&gs.current.mat),
-        Some(KeyCode::Down) => gs.current.mat = mat3_clockwise_rot(&gs.current.mat),
-        _ => {}
+    }
+    if is_key_pressed(KeyCode::Up) {
+        gs.current.mat = mat3_clockwise_rot(&gs.current.mat)
+    }
+    if is_key_down(KeyCode::Down) {
+        if time - gs.last_update < (UPDATE_TIMEOUT / 5.0) {
+            return;
+        }
+        gs.last_update = time;
+
+        let t = &gs.current;
+        let new_pos = t.pos + vec2(0.0, -1.0);
+        gs.current.pos = new_pos;
     }
 }

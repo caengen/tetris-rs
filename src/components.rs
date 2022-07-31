@@ -18,7 +18,7 @@ pub const WELL_CELL_GAP: f32 = 0.05;
 pub const WELL_CELL: f32 = 1.0;
 
 // timers in seconds
-pub const UPDATE_TIMER: f64 = 0.5;
+pub const UPDATE_TIMEOUT: f64 = 0.5;
 
 #[derive(Copy, Clone)]
 pub enum TetrominoType {
@@ -45,6 +45,25 @@ pub struct Tetromino3 {
     pub color: Color,
 }
 
+impl Tetromino3 {
+    pub fn relative_points(self: &Self, pos: &Vec2) -> Vec<Vec2> {
+        let mut points = Vec::new();
+        let x = pos.x;
+        let y = pos.y;
+        for r in 0..3 {
+            for c in 0..3 {
+                if self.mat.row(r)[c] == 1.0 {
+                    let dx = x + r as f32;
+                    let dy = WELL_HEIGHT as f32 - (y + c as f32);
+                    points.push(vec2(dx, dy))
+                }
+            }
+        }
+
+        points
+    }
+}
+
 #[derive(Clone)]
 pub struct Block {
     pub color: Color,
@@ -64,7 +83,7 @@ pub fn get_game_state() -> GameState {
     srand(TETROMINO_SEED);
     let next = spawner::random_tetrominos(&tetrominos, 10);
     let mut current = spawner::random_tetromino(&tetrominos);
-    current.pos = vec2(f32::floor(5.0 - current.width as f32 / 2.0), 22.0);
+    current.pos = vec2(f32::floor(5.0 - current.width as f32 / 2.0), 15.0); //22
     GameState {
         scl: 0.0,
         placed_blocks: vec![None; (WELL_WIDTH * WELL_HEIGHT) as usize],

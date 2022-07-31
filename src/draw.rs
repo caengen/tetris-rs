@@ -1,4 +1,7 @@
-use macroquad::prelude::{clear_background, draw_rectangle, draw_text, Vec2, BLACK, BLUE, WHITE};
+use macroquad::prelude::{
+    clear_background, draw_circle, draw_rectangle, draw_text, Vec2, BLACK, BLUE, GREEN, ORANGE,
+    RED, WHITE,
+};
 
 use crate::components::{GameState, Tetromino3, WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT, WELL_WIDTH};
 
@@ -26,8 +29,14 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino3) {
             let dy = WELL_HEIGHT as f32 - (y + c as f32);
             if current.mat.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
                 draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
+            } else {
+                draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, ORANGE);
             }
         }
+    }
+    let points = current.relative_points(&current.pos);
+    for p in points.iter() {
+        draw_circle(p.x as f32 * scl, p.y as f32 * scl, 0.2 * scl, RED)
     }
 }
 
