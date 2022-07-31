@@ -1,5 +1,7 @@
+use crate::components::WELL_HEIGHT;
+
 use super::{Tetromino3, WELL_WIDTH};
-use macroquad::prelude::Vec2;
+use macroquad::prelude::{debug, Vec2};
 
 pub fn well_collision(tetromino: &Tetromino3, pos: &Vec2) -> bool {
     let points = tetromino.relative_points(pos);
@@ -11,4 +13,12 @@ pub fn well_collision(tetromino: &Tetromino3, pos: &Vec2) -> bool {
     }
 
     false
+}
+
+pub fn bottom_collision(tetromino: &Tetromino3, pos: &Vec2) -> bool {
+    let points = tetromino.relative_points(pos);
+    points.iter().any(|p| {
+        debug!("{}", p.to_string());
+        p.y == (WELL_HEIGHT - 1) as f32
+    })
 }

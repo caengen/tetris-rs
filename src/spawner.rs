@@ -1,5 +1,5 @@
 use macroquad::{
-    prelude::{const_mat3, Color, Mat3, Vec2, BLUE, GREEN, ORANGE, PURPLE, RED},
+    prelude::{const_mat3, vec2, Color, Mat3, Vec2, BLUE, GREEN, ORANGE, PURPLE, RED},
     rand,
 };
 
@@ -36,11 +36,12 @@ pub fn tetromino_set() -> Vec<Tetromino3> {
     // let types = vec![TetrominoType]
 
     for (t, mat) in mats.iter() {
+        let width = 3;
         tetrominos.push(Tetromino3 {
-            pos: Vec2::new(0.0, WELL_HEIGHT as f32),
+            pos: vec2(f32::floor(5.0 - width as f32 / 2.0), 15.0),
             rot_index: 0,
             mat: *mat,
-            width: 3,
+            width,
             tetromino_type: *t,
             color: tetromino_color(t),
         });
@@ -59,6 +60,12 @@ pub fn random_tetrominos(tetrominos: &Vec<Tetromino3>, amount: usize) -> Vec<Tet
     rand_tetrominos
 }
 
-pub fn random_tetromino(tetrominos: &Vec<Tetromino3>) -> Tetromino3 {
+fn random_tetromino(tetrominos: &Vec<Tetromino3>) -> Tetromino3 {
     random_tetrominos(tetrominos, 1)[0].clone()
+}
+
+pub fn spawn_tetromino(tetrominos: &Vec<Tetromino3>) -> Tetromino3 {
+    let mut t = random_tetromino(tetrominos);
+
+    t
 }

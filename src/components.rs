@@ -35,7 +35,7 @@ pub struct Tetromino4 {
     pub rot_index: usize,
     pub mat: Mat4,
 }
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Tetromino3 {
     pub pos: Vec2,
     pub rot_index: usize,
@@ -82,8 +82,7 @@ pub fn get_game_state() -> GameState {
     let tetrominos = spawner::tetromino_set();
     srand(TETROMINO_SEED);
     let next = spawner::random_tetrominos(&tetrominos, 10);
-    let mut current = spawner::random_tetromino(&tetrominos);
-    current.pos = vec2(f32::floor(5.0 - current.width as f32 / 2.0), 15.0); //22
+    let mut current = spawner::spawn_tetromino(&tetrominos);
     GameState {
         scl: 0.0,
         placed_blocks: vec![None; (WELL_WIDTH * WELL_HEIGHT) as usize],
