@@ -11,7 +11,7 @@ pub fn apply_gravity(placed: &mut Vec<Option<Block>>, removed_lines: &Vec<usize>
     let line = removed_lines.iter().min().unwrap();
     debug!("apply gravity above (below) line {}", line);
 
-    for y in 0..*line {
+    for y in (0..*line).rev() {
         for x in 0..WELL_WIDTH {
             let idx = xy_idx(x as f32, y as f32);
             let new_idx = xy_idx(x as f32, (y + y_delta) as f32);
