@@ -1,11 +1,11 @@
 use super::{xy_idx, Block, Tetromino, WELL_HEIGHT, WELL_WIDTH};
 use macroquad::prelude::{debug, Vec2};
 
-pub fn well_collision(tetromino: &Tetromino, pos: &Vec2) -> bool {
+pub fn wall_collision(tetromino: &Tetromino, pos: &Vec2) -> bool {
     let points = tetromino.relative_points(pos);
 
     for p in points.iter() {
-        if p.x < 0.0 || p.x > ((WELL_WIDTH - 1) as f32) || p.y < 0.0 {
+        if p.x < 0.0 || p.x > ((WELL_WIDTH - 1) as f32) {
             return true;
         }
     }
@@ -77,13 +77,17 @@ pub fn vertical_block_collision(
         }
     })
 }
+pub fn should_commit_tetromino(tetromino: &Tetromino, placed: &Vec<Option<Block>>) -> bool {
+    bottom_collision(tetromino, &tetromino.pos)
+        || vertical_block_collision(placed, tetromino, &tetromino.pos)
+}
 
 pub fn can_translate(tetromino: &Tetromino, placed: &Vec<Option<Block>>, new_pos: &Vec2) -> bool {
     if new_pos.x < tetromino.pos.x {
-        return !well_collision(tetromino, new_pos)
+        return !wall_collision(tetromino, new_pos)
             && !left_block_collision(placed, tetromino, &tetromino.pos);
     } else if new_pos.x > tetromino.pos.x {
-        return !well_collision(tetromino, &new_pos)
+        return !wall_collision(tetromino, &new_pos)
             && !right_block_collision(placed, tetromino, &tetromino.pos);
     }
 

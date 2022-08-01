@@ -1,4 +1,4 @@
-use collision::{bottom_collision, vertical_block_collision};
+use collision::{bottom_collision, should_commit_tetromino, vertical_block_collision};
 use macroquad::prelude::*;
 mod components;
 use components::*;
@@ -16,9 +16,7 @@ pub fn xy_idx(x: f32, y: f32) -> usize {
 }
 
 fn update(gs: &mut GameState) {
-    if bottom_collision(&gs.current, &gs.current.pos)
-        || vertical_block_collision(&gs.placed_blocks, &gs.current, &gs.current.pos)
-    {
+    if should_commit_tetromino(&gs.current, &gs.placed_blocks) {
         let points = gs.current.relative_points(&gs.current.pos);
 
         for p in points.iter() {
@@ -34,7 +32,7 @@ fn update(gs: &mut GameState) {
     let t = &gs.current;
     let new_pos = t.pos + vec2(0.0, -1.0);
 
-    if !collision::well_collision(&gs.current, &new_pos) {
+    if !collision::wall_collision(&gs.current, &new_pos) {
         let time = get_time();
 
         if time - gs.last_update < UPDATE_TIMEOUT {
