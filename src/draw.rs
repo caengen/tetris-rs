@@ -3,8 +3,8 @@ use macroquad::prelude::{
     WHITE,
 };
 
-use crate::components::{
-    Block, GameState, Tetromino3, WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT, WELL_WIDTH,
+use super::{
+    Block, GameState, Tetromino, TetrominoType, WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT, WELL_WIDTH,
 };
 
 pub fn draw_well(scl: f32) {
@@ -21,19 +21,39 @@ pub fn draw_well(scl: f32) {
     }
 }
 
-pub fn draw_tetromino(scl: f32, current: &Tetromino3, debug: &bool) {
+pub fn draw_tetromino(scl: f32, current: &Tetromino, debug: &bool) {
     let x = current.pos.x;
     let y = current.pos.y;
     let w = (WELL_CELL - WELL_CELL_GAP) * scl;
-    for r in 0..3 {
-        for c in 0..3 {
-            let dx = x + r as f32;
-            let dy = WELL_HEIGHT as f32 - (y + c as f32);
-            if current.mat.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
-                draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
-            } else {
-                if *debug {
-                    draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, PINK);
+
+    match current.tetromino_type {
+        TetrominoType::I | TetrominoType::O => {
+            for r in 0..4 {
+                for c in 0..4 {
+                    let dx = x + r as f32;
+                    let dy = WELL_HEIGHT as f32 - (y + c as f32);
+                    if current.mat4.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
+                        draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
+                    } else {
+                        if *debug {
+                            draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, PINK);
+                        }
+                    }
+                }
+            }
+        }
+        _ => {
+            for r in 0..3 {
+                for c in 0..3 {
+                    let dx = x + r as f32;
+                    let dy = WELL_HEIGHT as f32 - (y + c as f32);
+                    if current.mat.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
+                        draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
+                    } else {
+                        if *debug {
+                            draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, PINK);
+                        }
+                    }
                 }
             }
         }

@@ -27,35 +27,47 @@ pub enum TetrominoType {
     S,
     T,
     Z,
-    // O,
+    I,
+    O,
 }
 
-pub struct Tetromino4 {
-    pub pos: Vec2,
-    pub rot_index: usize,
-    pub mat: Mat4,
-}
 #[derive(Clone, Copy)]
-pub struct Tetromino3 {
+pub struct Tetromino {
     pub pos: Vec2,
     pub rot_index: usize,
     pub mat: Mat3,
+    pub mat4: Mat4,
     pub width: i32,
     pub tetromino_type: TetrominoType,
     pub color: Color,
 }
 
-impl Tetromino3 {
+impl Tetromino {
     pub fn relative_points(self: &Self, pos: &Vec2) -> Vec<Vec2> {
         let mut points = Vec::new();
         let x = pos.x;
         let y = pos.y;
-        for r in 0..3 {
-            for c in 0..3 {
-                if self.mat.row(r)[c] == 1.0 {
-                    let dx = x + r as f32;
-                    let dy = WELL_HEIGHT as f32 - (y + c as f32);
-                    points.push(vec2(dx, dy))
+        match self.tetromino_type {
+            TetrominoType::I | TetrominoType::O => {
+                for r in 0..4 {
+                    for c in 0..4 {
+                        if self.mat4.row(r)[c] == 1.0 {
+                            let dx = x + r as f32;
+                            let dy = WELL_HEIGHT as f32 - (y + c as f32);
+                            points.push(vec2(dx, dy))
+                        }
+                    }
+                }
+            }
+            _ => {
+                for r in 0..3 {
+                    for c in 0..3 {
+                        if self.mat.row(r)[c] == 1.0 {
+                            let dx = x + r as f32;
+                            let dy = WELL_HEIGHT as f32 - (y + c as f32);
+                            points.push(vec2(dx, dy))
+                        }
+                    }
                 }
             }
         }
@@ -73,9 +85,9 @@ pub struct GameState {
     pub debug: bool,
     pub scl: f32,
     pub placed_blocks: Vec<Option<Block>>,
-    pub next: Vec<Tetromino3>,
-    pub current: Tetromino3,
-    pub tetrominos: Vec<Tetromino3>,
+    pub next: Vec<Tetromino>,
+    pub current: Tetromino,
+    pub tetrominos: Vec<Tetromino>,
     pub last_update: f64,
 }
 
@@ -83,7 +95,7 @@ pub fn get_game_state() -> GameState {
     let tetrominos = spawner::tetromino_set();
     srand(TETROMINO_SEED);
     let next = spawner::random_tetrominos(&tetrominos, 10);
-    let mut current = spawner::spawn_tetromino(&tetrominos);
+    let current = spawner::spawn_tetromino(&tetrominos);
     GameState {
         debug: false,
         scl: 0.0,

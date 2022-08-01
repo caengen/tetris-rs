@@ -2,10 +2,10 @@ use crate::xy_idx;
 
 use super::{Block, WELL_HEIGHT};
 
-use super::{Tetromino3, WELL_WIDTH};
+use super::{Tetromino, WELL_WIDTH};
 use macroquad::prelude::{debug, Vec2};
 
-pub fn well_collision(tetromino: &Tetromino3, pos: &Vec2) -> bool {
+pub fn well_collision(tetromino: &Tetromino, pos: &Vec2) -> bool {
     let points = tetromino.relative_points(pos);
 
     for p in points.iter() {
@@ -19,7 +19,7 @@ pub fn well_collision(tetromino: &Tetromino3, pos: &Vec2) -> bool {
 
 pub fn right_block_collision(
     placed: &Vec<Option<Block>>,
-    tetromino: &Tetromino3,
+    tetromino: &Tetromino,
     pos: &Vec2,
 ) -> bool {
     let points = tetromino.relative_points(pos);
@@ -41,7 +41,7 @@ pub fn right_block_collision(
 
 pub fn left_block_collision(
     placed: &Vec<Option<Block>>,
-    tetromino: &Tetromino3,
+    tetromino: &Tetromino,
     pos: &Vec2,
 ) -> bool {
     let points = tetromino.relative_points(pos);
@@ -61,14 +61,14 @@ pub fn left_block_collision(
     collision
 }
 
-pub fn bottom_collision(tetromino: &Tetromino3, pos: &Vec2) -> bool {
+pub fn bottom_collision(tetromino: &Tetromino, pos: &Vec2) -> bool {
     let points = tetromino.relative_points(pos);
     points.iter().any(|p| p.y == (WELL_HEIGHT - 1) as f32)
 }
 
 pub fn vertical_block_collision(
     placed: &Vec<Option<Block>>,
-    tetromino: &Tetromino3,
+    tetromino: &Tetromino,
     pos: &Vec2,
 ) -> bool {
     let points = tetromino.relative_points(pos);

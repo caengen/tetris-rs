@@ -26,7 +26,7 @@ fn update(gs: &mut GameState) {
             });
         }
 
-        gs.current = gs.next.drain(0..1).collect::<Vec<Tetromino3>>()[0];
+        gs.current = gs.next.drain(0..1).collect::<Vec<Tetromino>>()[0];
         gs.next.push(spawner::spawn_tetromino(&gs.tetrominos));
     }
 
