@@ -21,7 +21,7 @@ pub fn draw_well(scl: f32) {
     }
 }
 
-pub fn draw_tetromino(scl: f32, current: &Tetromino3) {
+pub fn draw_tetromino(scl: f32, current: &Tetromino3, debug: &bool) {
     let x = current.pos.x;
     let y = current.pos.y;
     let w = (WELL_CELL - WELL_CELL_GAP) * scl;
@@ -32,13 +32,18 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino3) {
             if current.mat.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
                 draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
             } else {
-                draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, PINK);
+                if *debug {
+                    draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, PINK);
+                }
             }
         }
     }
-    let points = current.relative_points(&current.pos);
-    for p in points.iter() {
-        draw_circle(p.x as f32 * scl, p.y as f32 * scl, 0.2 * scl, RED)
+
+    if *debug {
+        let points = current.relative_points(&current.pos);
+        for p in points.iter() {
+            draw_circle(p.x as f32 * scl, p.y as f32 * scl, 0.2 * scl, RED)
+        }
     }
 }
 
@@ -61,14 +66,16 @@ pub fn draw(gs: &GameState) {
     clear_background(BLACK);
 
     draw_well(gs.scl);
-    draw_tetromino(gs.scl, &gs.current);
+    draw_tetromino(gs.scl, &gs.current, &gs.debug);
     draw_placed(gs.scl, &gs.placed_blocks);
 
-    draw_text(
-        format!("{} {}", gs.current.pos.x, gs.current.pos.y).as_str(),
-        240.0,
-        290.0,
-        15.0,
-        BLUE,
-    );
+    if gs.debug {
+        draw_text(
+            format!("{} {}", gs.current.pos.x, gs.current.pos.y).as_str(),
+            gs.current.pos.x + 20.0,
+            gs.current.pos.y - WELL_HEIGHT as f32 - 20.0,
+            15.0,
+            BLUE,
+        );
+    }
 }

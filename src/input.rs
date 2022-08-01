@@ -2,6 +2,8 @@ use macroquad::prelude::{
     get_time, is_key_down, is_key_pressed, mat3, vec2, vec3, KeyCode, Mat3, Quat,
 };
 
+use crate::collision::right_block_collision;
+
 use super::{collision, GameState, UPDATE_TIMEOUT, WELL_WIDTH};
 
 pub fn mat3_clockwise_rot(m_a: &Mat3) -> Mat3 {
@@ -26,13 +28,17 @@ pub fn input(gs: &mut GameState) {
     let time = get_time();
     if is_key_pressed(KeyCode::Left) {
         let new_pos = vec2(gs.current.pos.x - 1.0, gs.current.pos.y);
-        if !collision::well_collision(&gs.current, &new_pos) {
+        if !collision::well_collision(&gs.current, &new_pos)
+            && !collision::left_block_collision(&gs.placed_blocks, &gs.current, &gs.current.pos)
+        {
             gs.current.pos = new_pos;
         }
     }
     if is_key_pressed(KeyCode::Right) {
         let new_pos = vec2(gs.current.pos.x + 1.0, gs.current.pos.y);
-        if !collision::well_collision(&gs.current, &new_pos) {
+        if !collision::well_collision(&gs.current, &new_pos)
+            && !collision::right_block_collision(&gs.placed_blocks, &gs.current, &gs.current.pos)
+        {
             gs.current.pos = new_pos;
         }
     }
@@ -48,5 +54,8 @@ pub fn input(gs: &mut GameState) {
         let t = &gs.current;
         let new_pos = t.pos + vec2(0.0, -1.0);
         gs.current.pos = new_pos;
+    }
+    if is_key_pressed(KeyCode::G) {
+        gs.debug = !gs.debug;
     }
 }

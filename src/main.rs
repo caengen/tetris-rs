@@ -1,4 +1,4 @@
-use collision::{block_collision, bottom_collision};
+use collision::{bottom_collision, vertical_block_collision};
 use macroquad::prelude::*;
 mod components;
 use components::*;
@@ -15,7 +15,7 @@ pub fn xy_idx(x: f32, y: f32) -> usize {
 
 fn update(gs: &mut GameState) {
     if bottom_collision(&gs.current, &gs.current.pos)
-        || block_collision(&gs.placed_blocks, &gs.current, &gs.current.pos)
+        || vertical_block_collision(&gs.placed_blocks, &gs.current, &gs.current.pos)
     {
         let points = gs.current.relative_points(&gs.current.pos);
 

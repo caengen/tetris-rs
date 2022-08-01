@@ -70,6 +70,7 @@ pub struct Block {
 }
 
 pub struct GameState {
+    pub debug: bool,
     pub scl: f32,
     pub placed_blocks: Vec<Option<Block>>,
     pub next: Vec<Tetromino3>,
@@ -84,6 +85,7 @@ pub fn get_game_state() -> GameState {
     let next = spawner::random_tetrominos(&tetrominos, 10);
     let mut current = spawner::spawn_tetromino(&tetrominos);
     GameState {
+        debug: false,
         scl: 0.0,
         placed_blocks: vec![None; (WELL_WIDTH * WELL_HEIGHT) as usize],
         next,
