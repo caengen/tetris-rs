@@ -9,6 +9,7 @@ mod input;
 use input::*;
 mod collision;
 mod gravity;
+mod srs;
 
 pub fn xy_idx(x: f32, y: f32) -> usize {
     (y as usize * WELL_WIDTH as usize) + x as usize
@@ -48,6 +49,13 @@ fn update(gs: &mut GameState) {
     if completed_lines.len() > 0 {
         spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
         gravity::apply_gravity(&mut gs.placed_blocks, &completed_lines);
+        match completed_lines.len() {
+            1 => gs.score.val += 1,
+            2 => gs.score.val += 3,
+            3 => gs.score.val += 5,
+            4 => gs.score.val += 8,
+            _ => {}
+        }
     }
 }
 

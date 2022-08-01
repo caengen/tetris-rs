@@ -1,8 +1,4 @@
-use crate::xy_idx;
-
-use super::{Block, WELL_HEIGHT};
-
-use super::{Tetromino, WELL_WIDTH};
+use super::{xy_idx, Block, Tetromino, WELL_HEIGHT, WELL_WIDTH};
 use macroquad::prelude::{debug, Vec2};
 
 pub fn well_collision(tetromino: &Tetromino, pos: &Vec2) -> bool {
@@ -80,6 +76,18 @@ pub fn vertical_block_collision(
             _ => return false,
         }
     })
+}
+
+pub fn can_translate(tetromino: &Tetromino, placed: &Vec<Option<Block>>, new_pos: &Vec2) -> bool {
+    if new_pos.x < tetromino.pos.x {
+        return !well_collision(tetromino, new_pos)
+            && !left_block_collision(placed, tetromino, &tetromino.pos);
+    } else if new_pos.x > tetromino.pos.x {
+        return !well_collision(tetromino, &new_pos)
+            && !right_block_collision(placed, tetromino, &tetromino.pos);
+    }
+
+    false
 }
 
 pub fn completed_lines(placed: &Vec<Option<Block>>) -> Vec<usize> {

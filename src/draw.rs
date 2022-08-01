@@ -4,7 +4,8 @@ use macroquad::prelude::{
 };
 
 use super::{
-    Block, GameState, Tetromino, TetrominoType, WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT, WELL_WIDTH,
+    Block, GameState, Score, Tetromino, TetrominoType, WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT,
+    WELL_WIDTH,
 };
 
 pub fn draw_well(scl: f32) {
@@ -26,7 +27,7 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino, debug: &bool) {
     let y = current.pos.y;
     let w = (WELL_CELL - WELL_CELL_GAP) * scl;
 
-    match current.tetromino_type {
+    match current.kind {
         TetrominoType::I | TetrominoType::O => {
             for r in 0..4 {
                 for c in 0..4 {
@@ -82,12 +83,22 @@ fn draw_placed(scl: f32, placed: &Vec<Option<Block>>) {
     }
 }
 
+fn draw_score(scl: f32, score: &Score) {
+    let level_txt = &format!("Level {}", score.level).to_string();
+    let score_txt = &format!("Score {}", score.val).to_string();
+    let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
+
+    draw_text(level_txt, ui_x, 20.0, 20.0, WHITE);
+    draw_text(score_txt, ui_x, 40.0, 20.0, WHITE);
+}
+
 pub fn draw(gs: &GameState) {
     clear_background(BLACK);
 
     draw_well(gs.scl);
     draw_tetromino(gs.scl, &gs.current, &gs.debug);
     draw_placed(gs.scl, &gs.placed_blocks);
+    draw_score(gs.scl, &gs.score);
 
     if gs.debug {
         draw_text(

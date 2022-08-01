@@ -38,7 +38,7 @@ pub struct Tetromino {
     pub mat: Mat3,
     pub mat4: Mat4,
     pub width: i32,
-    pub tetromino_type: TetrominoType,
+    pub kind: TetrominoType,
     pub color: Color,
 }
 
@@ -47,7 +47,7 @@ impl Tetromino {
         let mut points = Vec::new();
         let x = pos.x;
         let y = pos.y;
-        match self.tetromino_type {
+        match self.kind {
             TetrominoType::I | TetrominoType::O => {
                 for r in 0..4 {
                     for c in 0..4 {
@@ -81,6 +81,11 @@ pub struct Block {
     pub color: Color,
 }
 
+pub struct Score {
+    pub level: usize,
+    pub val: usize,
+}
+
 pub struct GameState {
     pub debug: bool,
     pub scl: f32,
@@ -89,6 +94,7 @@ pub struct GameState {
     pub current: Tetromino,
     pub tetrominos: Vec<Tetromino>,
     pub last_update: f64,
+    pub score: Score,
 }
 
 pub fn get_game_state() -> GameState {
@@ -104,5 +110,6 @@ pub fn get_game_state() -> GameState {
         tetrominos,
         current,
         last_update: 0.0,
+        score: Score { level: 1, val: 0 },
     }
 }

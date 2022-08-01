@@ -59,7 +59,7 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             mat: *mat,
             mat4: Mat4::ZERO,
             width,
-            tetromino_type: *t,
+            kind: *t,
             color: tetromino_color(t),
         });
     }
@@ -71,7 +71,7 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             mat: Mat3::ZERO,
             mat4: *mat,
             width,
-            tetromino_type: *t,
+            kind: *t,
             color: tetromino_color(t),
         });
     }
@@ -94,7 +94,7 @@ fn random_tetromino(tetrominos: &Vec<Tetromino>) -> Tetromino {
 }
 
 pub fn spawn_tetromino(tetrominos: &Vec<Tetromino>) -> Tetromino {
-    let mut t = random_tetromino(tetrominos);
+    let t = random_tetromino(tetrominos);
 
     t
 }
