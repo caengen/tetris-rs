@@ -8,6 +8,7 @@ use draw::*;
 mod input;
 use input::*;
 mod collision;
+mod gravity;
 
 pub fn xy_idx(x: f32, y: f32) -> usize {
     (y as usize * WELL_WIDTH as usize) + x as usize
@@ -41,6 +42,12 @@ fn update(gs: &mut GameState) {
         gs.last_update = time;
 
         gs.current.pos = new_pos;
+    }
+
+    let completed_lines = collision::completed_lines(&gs.placed_blocks);
+    if completed_lines.len() > 0 {
+        spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
+        gravity::apply_gravity(&mut gs.placed_blocks, &completed_lines);
     }
 }
 

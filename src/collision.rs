@@ -81,3 +81,22 @@ pub fn vertical_block_collision(
         }
     })
 }
+
+pub fn completed_lines(placed: &Vec<Option<Block>>) -> Vec<usize> {
+    let mut completed = Vec::new();
+    for y in 0..WELL_HEIGHT {
+        let mut complete = true;
+        for x in 0..WELL_WIDTH {
+            let idx = xy_idx(x as f32, y as f32);
+            match placed[idx] {
+                Some(_) => continue,
+                None => complete = false,
+            }
+        }
+        if complete {
+            completed.push(y);
+        }
+    }
+
+    completed
+}

@@ -1,11 +1,11 @@
 use macroquad::{
-    prelude::{const_mat3, vec2, Color, Mat3, Vec2, BLUE, GREEN, ORANGE, PURPLE, RED},
+    prelude::{const_mat3, debug, vec2, Color, Mat3, Vec2, BLUE, GREEN, ORANGE, PURPLE, RED},
     rand,
 };
 
-use crate::components::{TetrominoType, WELL_HEIGHT};
+use crate::components::WELL_WIDTH;
 
-use super::{Tetromino3, Tetromino4};
+use super::{xy_idx, Block, Tetromino3, Tetromino4, TetrominoType, WELL_HEIGHT};
 
 // 3x3 tetrominos
 const J: Mat3 = const_mat3!([1.0, 0.0, 0.0], [1.0, 1.0, 1.0], [0.0, 0.0, 0.0]);
@@ -29,9 +29,9 @@ pub fn tetromino_set() -> Vec<Tetromino3> {
     let mats: Vec<(TetrominoType, Mat3)> = vec![
         (TetrominoType::J, J),
         (TetrominoType::L, L),
-        (TetrominoType::S, S),
-        (TetrominoType::T, T),
-        (TetrominoType::Z, Z),
+        // (TetrominoType::S, S),
+        // (TetrominoType::T, T),
+        // (TetrominoType::Z, Z),
     ];
     // let types = vec![TetrominoType]
 
@@ -68,4 +68,14 @@ pub fn spawn_tetromino(tetrominos: &Vec<Tetromino3>) -> Tetromino3 {
     let mut t = random_tetromino(tetrominos);
 
     t
+}
+
+pub fn despawn_blocks(placed: &mut Vec<Option<Block>>, lines: &Vec<usize>) {
+    for y in lines.iter() {
+        debug!("despawning line {}", y);
+        for x in 0..WELL_WIDTH {
+            let idx = xy_idx(x as f32, *y as f32);
+            placed[idx] = None;
+        }
+    }
 }

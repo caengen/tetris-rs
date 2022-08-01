@@ -64,7 +64,7 @@ impl Tetromino3 {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Block {
     pub color: Color,
 }
