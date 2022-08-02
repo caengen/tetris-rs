@@ -53,11 +53,13 @@ pub fn tetromino_set() -> Vec<Tetromino> {
 
     for (t, mat) in mats.iter() {
         let width = 3;
+        let pos = vec2(
+            f32::floor(5.0 - width as f32 / 2.0),
+            f32::floor(WELL_HEIGHT as f32 - width as f32 / 2.0) + 2.0,
+        );
         tetrominos.push(Tetromino {
-            pos: vec2(
-                f32::floor(5.0 - width as f32 / 2.0),
-                WELL_HEIGHT as f32 + width as f32,
-            ),
+            pos,
+            spawn_pos: pos,
             rot_index: 0,
             mat: *mat,
             mat4: Mat4::ZERO,
@@ -68,8 +70,10 @@ pub fn tetromino_set() -> Vec<Tetromino> {
     }
     for (t, mat) in mats2.iter() {
         let width = 4;
+        let pos = vec2(f32::floor(5.0 - width as f32 / 2.0), 20.0);
         tetrominos.push(Tetromino {
-            pos: vec2(f32::floor(5.0 - width as f32 / 2.0), 20.0),
+            pos,
+            spawn_pos: pos,
             rot_index: 0,
             mat: Mat3::ZERO,
             mat4: *mat,

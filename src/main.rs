@@ -21,6 +21,10 @@ pub fn rel_xy_idx(x: f32, y: f32, w: f32) -> usize {
 
 fn update(gs: &mut GameState) {
     if should_commit_tetromino(&gs.current, &gs.placed_blocks) {
+        if gs.current.pos.cmpeq(gs.current.spawn_pos).all() {
+            gs.score.topout = true;
+            return;
+        }
         let points = gs.current.relative_points(&gs.current.pos);
 
         for p in points.iter() {
@@ -69,8 +73,11 @@ async fn main() {
     loop {
         gs.scl = screen_height() / UNITS;
 
-        input(&mut gs);
-        update(&mut gs);
+        if !gs.score.topout {
+            input(&mut gs);
+            update(&mut gs);
+        }
+
         draw(&gs);
 
         next_frame().await

@@ -90,6 +90,10 @@ fn draw_score(scl: f32, score: &Score) {
 
     draw_text(level_txt, ui_x, 20.0, 20.0, WHITE);
     draw_text(score_txt, ui_x, 40.0, 20.0, WHITE);
+
+    if score.topout {
+        draw_text("Top out", ui_x, 60.0, 20.0, WHITE);
+    }
 }
 
 pub fn draw(gs: &GameState) {

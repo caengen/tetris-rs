@@ -1,17 +1,15 @@
+/*
+ Super Rotation System (SRS)
+ Tetris Guideline Standard Compliant
+*/
+use super::{collision::can_translate, rel_xy_idx, Block, Tetromino, TetrominoType};
 use macroquad::prelude::{const_vec2, debug, vec2, Mat3, Mat4, Vec2};
 
-use crate::{collision::can_translate, rel_xy_idx, xy_idx};
-
-use super::{Block, Tetromino, TetrominoType};
-
-// super rotation system
-fn mat3_clockwise_rot(m_a: &Mat3) -> Mat3 {
-    let col = m_a.to_cols_array();
-    let m_b = Mat3::from_cols_array(&[
+fn mat3_clockwise_rot(mat: &Mat3) -> Mat3 {
+    let col = mat.to_cols_array();
+    Mat3::from_cols_array(&[
         col[2], col[5], col[8], col[1], col[4], col[7], col[0], col[3], col[6],
-    ]);
-
-    m_b
+    ])
 }
 
 /*
@@ -25,14 +23,12 @@ fn mat3_counter_clockwise_rot(m_a: &Mat3) -> Mat3 {
 }
  */
 
-fn mat4_clockwise_rot(m_a: &Mat4) -> Mat4 {
-    let col = m_a.to_cols_array();
-    let m_b = Mat4::from_cols_array(&[
+fn mat4_clockwise_rot(mat: &Mat4) -> Mat4 {
+    let col = mat.to_cols_array();
+    Mat4::from_cols_array(&[
         col[3], col[7], col[11], col[15], col[2], col[6], col[10], col[14], col[1], col[5], col[9],
         col[13], col[0], col[4], col[8], col[12],
-    ]);
-
-    m_b
+    ])
 }
 
 pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>) {

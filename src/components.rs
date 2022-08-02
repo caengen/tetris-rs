@@ -34,6 +34,7 @@ pub enum TetrominoType {
 #[derive(Clone, Copy)]
 pub struct Tetromino {
     pub pos: Vec2,
+    pub spawn_pos: Vec2,
     pub rot_index: usize,
     pub mat: Mat3,
     pub mat4: Mat4,
@@ -84,6 +85,7 @@ pub struct Block {
 pub struct Score {
     pub level: usize,
     pub val: usize,
+    pub topout: bool,
 }
 
 pub struct GameState {
@@ -110,6 +112,10 @@ pub fn get_game_state() -> GameState {
         tetrominos,
         current,
         last_update: 0.0,
-        score: Score { level: 1, val: 0 },
+        score: Score {
+            level: 1,
+            val: 0,
+            topout: false,
+        },
     }
 }
