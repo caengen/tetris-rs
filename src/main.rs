@@ -1,4 +1,4 @@
-use collision::{bottom_collision, should_commit_tetromino, vertical_block_collision};
+use collision::should_commit_tetromino;
 use macroquad::prelude::*;
 mod components;
 use components::*;
@@ -13,6 +13,10 @@ mod srs;
 
 pub fn xy_idx(x: f32, y: f32) -> usize {
     (y as usize * WELL_WIDTH as usize) + x as usize
+}
+
+pub fn rel_xy_idx(x: f32, y: f32, w: f32) -> usize {
+    (y as usize * w as usize) + x as usize
 }
 
 fn update(gs: &mut GameState) {

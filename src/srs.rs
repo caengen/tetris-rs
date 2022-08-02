@@ -1,4 +1,6 @@
-use macroquad::prelude::{Mat3, Mat4};
+use macroquad::prelude::{const_vec2, debug, vec2, Mat3, Mat4, Vec2};
+
+use crate::{collision::can_translate, rel_xy_idx, xy_idx};
 
 use super::{Block, Tetromino, TetrominoType};
 
@@ -35,8 +37,67 @@ fn mat4_clockwise_rot(m_a: &Mat4) -> Mat4 {
 
 pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>) {
     match tetromino.kind {
-        TetrominoType::I => tetromino.mat4 = tetromino.mat4.transpose(),
+        TetrominoType::I => {
+            tetromino.mat4 = tetromino.mat4.transpose();
+            tetromino.rot_index = (tetromino.rot_index + 1) % 4;
+        }
         TetrominoType::O => {}
-        _ => tetromino.mat = mat3_clockwise_rot(&tetromino.mat),
+        _ => {
+            let mut new_tetromino = tetromino.clone();
+            new_tetromino.mat = mat3_clockwise_rot(&tetromino.mat);
+            // test 1
+            if can_translate(&new_tetromino, placed, &new_tetromino.pos) {
+                tetromino.mat = new_tetromino.mat;
+                tetromino.rot_index = (tetromino.rot_index + 1) % 4;
+            } else {
+                let res = mat3_super_kick(&new_tetromino, placed);
+                match res {
+                    Ok(new_pos) => {
+                        tetromino.mat = new_tetromino.mat;
+                        tetromino.pos = new_pos;
+                        tetromino.rot_index = (tetromino.rot_index + 1) % 4;
+                    }
+                    Err(str) => {
+                        debug!("{}", str);
+                    }
+                }
+            }
+        }
     }
+}
+
+const TRANSLATIONS: [Vec2; 16] = [
+    const_vec2!([-1., 0.]),
+    const_vec2!([-1., 1.]),
+    const_vec2!([0., -2.]),
+    const_vec2!([-1., -2.]),
+    const_vec2!([1., 0.]),
+    const_vec2!([1., -1.]),
+    const_vec2!([0., 2.]),
+    const_vec2!([1., 2.]),
+    const_vec2!([1., 0.]),
+    const_vec2!([1., 1.]),
+    const_vec2!([0., -2.]),
+    const_vec2!([1., -2.]),
+    const_vec2!([-1., 0.]),
+    const_vec2!([-1., -1.]),
+    const_vec2!([0., 2.]),
+    const_vec2!([-1., 2.]),
+];
+pub fn mat3_super_kick(
+    tetromino: &Tetromino,
+    placed: &Vec<Option<Block>>,
+) -> Result<Vec2, &'static str> {
+    for x in 0..4 {
+        let idx = rel_xy_idx(x as f32, tetromino.rot_index as f32, 4.0);
+        let new_pos = vec2(
+            &tetromino.pos.x + TRANSLATIONS[idx].x,
+            &tetromino.pos.y + TRANSLATIONS[idx].y,
+        );
+        if can_translate(tetromino, placed, &new_pos) {
+            return Ok(new_pos);
+        }
+    }
+
+    Err("Failed to kick")
 }
