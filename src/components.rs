@@ -1,6 +1,6 @@
 use super::spawner;
 use macroquad::{
-    prelude::{vec2, Color, Mat3, Mat4, Vec2},
+    prelude::{vec2, Color, KeyCode, Mat3, Mat4, Vec2},
     rand::srand,
 };
 use std::slice::Iter;
@@ -18,7 +18,9 @@ pub const WELL_CELL_GAP: f32 = 0.01;
 pub const WELL_CELL: f32 = 1.0;
 
 // timers in seconds
-pub const UPDATE_TIMEOUT: f64 = 0.5;
+pub const UPDATE_DELAY: f64 = 0.5;
+pub const AUTO_SHIFT_TIMOUT: f64 = 0.075;
+pub const AUTO_SHIFT_DELAY: f64 = 0.3;
 
 #[derive(Copy, Clone)]
 pub enum TetrominoType {
@@ -88,6 +90,11 @@ pub struct Score {
     pub topout: bool,
 }
 
+pub struct KeyInfo {
+    pub auto_shift_start: f64,
+    pub auto_shift: (Option<KeyCode>, f64),
+}
+
 pub struct GameState {
     pub debug: bool,
     pub scl: f32,
@@ -97,6 +104,7 @@ pub struct GameState {
     pub tetrominos: Vec<Tetromino>,
     pub last_update: f64,
     pub score: Score,
+    pub key_info: KeyInfo,
 }
 
 pub fn get_game_state() -> GameState {
@@ -116,6 +124,10 @@ pub fn get_game_state() -> GameState {
             level: 1,
             val: 0,
             topout: false,
+        },
+        key_info: KeyInfo {
+            auto_shift_start: 0.0,
+            auto_shift: (None, 0.0),
         },
     }
 }

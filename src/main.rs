@@ -43,7 +43,7 @@ fn update(gs: &mut GameState) {
     if !collision::wall_collision(&gs.current, &new_pos) {
         let time = get_time();
 
-        if time - gs.last_update < UPDATE_TIMEOUT {
+        if time - gs.last_update < UPDATE_DELAY {
             return;
         }
         gs.last_update = time;
