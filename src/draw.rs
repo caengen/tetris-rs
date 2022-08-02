@@ -88,11 +88,11 @@ fn draw_score(scl: f32, score: &Score) {
     let score_txt = &format!("Score {}", score.val).to_string();
     let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
 
-    draw_text(level_txt, ui_x, 20.0, 20.0, WHITE);
-    draw_text(score_txt, ui_x, 40.0, 20.0, WHITE);
+    draw_text(level_txt, ui_x, 20.0, 2.0 * scl, WHITE);
+    draw_text(score_txt, ui_x, 40.0, 2.0 * scl, WHITE);
 
     if score.topout {
-        draw_text("Top out", ui_x, 60.0, 20.0, WHITE);
+        draw_text("Top out", ui_x, 60.0, 2.0 * scl, WHITE);
     }
 }
 
@@ -109,7 +109,7 @@ pub fn draw(gs: &GameState) {
             format!("{} {}", gs.current.pos.x, gs.current.pos.y).as_str(),
             gs.current.pos.x + 20.0,
             gs.current.pos.y - WELL_HEIGHT as f32 - 20.0,
-            15.0,
+            1.5 * gs.scl,
             BLUE,
         );
     }
