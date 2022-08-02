@@ -14,7 +14,7 @@ pub const UNITS: f32 = 22.0; // scale 1:22
 pub const WELL_WIDTH: usize = 10;
 pub const WELL_HEIGHT: usize = 22;
 
-pub const WELL_CELL_GAP: f32 = 0.05;
+pub const WELL_CELL_GAP: f32 = 0.01;
 pub const WELL_CELL: f32 = 1.0;
 
 // timers in seconds
