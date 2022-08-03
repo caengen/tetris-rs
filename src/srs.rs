@@ -2,7 +2,7 @@
  Super Rotation System (SRS)
  Tetris Guideline Standard Compliant
 */
-use super::{collision::can_translate, rel_xy_idx, Block, Tetromino, TetrominoType};
+use super::{collision::can_translate, rel_xy_idx, Block, Ghost, Tetromino, TetrominoType};
 use macroquad::prelude::{const_vec2, debug, vec2, Mat3, Mat4, Vec2};
 
 fn mat3_clockwise_rot(mat: &Mat3) -> Mat3 {
@@ -31,7 +31,7 @@ fn mat4_clockwise_rot(mat: &Mat4) -> Mat4 {
     ])
 }
 
-pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>) {
+pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mut Ghost) {
     match tetromino.kind {
         TetrominoType::I => {
             let mut new_tetromino = tetromino.clone();
@@ -39,6 +39,7 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>) {
             if can_translate(&new_tetromino, placed, &new_tetromino.pos) {
                 tetromino.mat4 = new_tetromino.mat4;
                 tetromino.rot_index = (tetromino.rot_index + 1) % 4;
+                ghost.dirty = true;
             } else {
                 let res = mat3_super_kick(&I_KICKS, &new_tetromino, placed);
                 match res {
@@ -46,6 +47,7 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>) {
                         tetromino.mat4 = new_tetromino.mat4;
                         tetromino.pos = new_pos;
                         tetromino.rot_index = (tetromino.rot_index + 1) % 4;
+                        ghost.dirty = true;
                     }
                     Err(str) => {
                         debug!("{}", str);
@@ -61,6 +63,7 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>) {
             if can_translate(&new_tetromino, placed, &new_tetromino.pos) {
                 tetromino.mat = new_tetromino.mat;
                 tetromino.rot_index = (tetromino.rot_index + 1) % 4;
+                ghost.dirty = true;
             } else {
                 let res = mat3_super_kick(&KICKS, &new_tetromino, placed);
                 match res {
@@ -68,6 +71,7 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>) {
                         tetromino.mat = new_tetromino.mat;
                         tetromino.pos = new_pos;
                         tetromino.rot_index = (tetromino.rot_index + 1) % 4;
+                        ghost.dirty = true;
                     }
                     Err(str) => {
                         debug!("{}", str);

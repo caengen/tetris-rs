@@ -20,7 +20,7 @@ pub fn rel_xy_idx(x: f32, y: f32, w: f32) -> usize {
 }
 
 fn update(gs: &mut GameState) {
-    if should_commit_tetromino(&gs.current, &gs.placed_blocks) {
+    if should_commit_tetromino(&gs.current, &gs.current.pos, &gs.placed_blocks) {
         if gs.current.pos.cmpeq(gs.current.spawn_pos).all() {
             gs.score.topout = true;
             return;
@@ -35,34 +35,48 @@ fn update(gs: &mut GameState) {
 
         gs.current = gs.next.drain(0..1).collect::<Vec<Tetromino>>()[0];
         gs.next.push(spawner::spawn_tetromino(&gs.tetrominos));
+        gs.ghost.dirty = true;
+
+        let completed_lines = collision::completed_lines(&gs.placed_blocks);
+        if completed_lines.len() > 0 {
+            spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
+            gravity::apply_gravity(&mut gs.placed_blocks, &completed_lines);
+            match completed_lines.len() {
+                1 => gs.score.val += 1,
+                2 => gs.score.val += 3,
+                3 => gs.score.val += 5,
+                4 => gs.score.val += 8,
+                _ => {}
+            }
+        }
     }
 
+    if gs.ghost.dirty {
+        gs.ghost.dirty = false;
+        let mut pos = gs.current.pos;
+        while pos.y >= 0.0 as f32 {
+            if should_commit_tetromino(&gs.current, &pos, &gs.placed_blocks) {
+                break;
+            }
+            pos.y -= 1.0;
+        }
+
+        debug!("updating ghost {}", pos);
+        gs.ghost.pos = pos;
+    }
+
+    // move downwards
     let t = &gs.current;
     let new_pos = t.pos + vec2(0.0, -1.0);
 
-    if !collision::wall_collision(&gs.current, &new_pos) {
-        let time = get_time();
+    let time = get_time();
 
-        if time - gs.last_update < UPDATE_DELAY {
-            return;
-        }
-        gs.last_update = time;
-
-        gs.current.pos = new_pos;
+    if time - gs.last_update < UPDATE_DELAY {
+        return;
     }
+    gs.last_update = time;
 
-    let completed_lines = collision::completed_lines(&gs.placed_blocks);
-    if completed_lines.len() > 0 {
-        spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
-        gravity::apply_gravity(&mut gs.placed_blocks, &completed_lines);
-        match completed_lines.len() {
-            1 => gs.score.val += 1,
-            2 => gs.score.val += 3,
-            3 => gs.score.val += 5,
-            4 => gs.score.val += 8,
-            _ => {}
-        }
-    }
+    gs.current.pos = new_pos;
 }
 
 #[macroquad::main("tetris.rs")]

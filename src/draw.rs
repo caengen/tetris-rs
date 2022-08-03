@@ -22,10 +22,15 @@ pub fn draw_well(scl: f32) {
     }
 }
 
-pub fn draw_tetromino(scl: f32, current: &Tetromino, debug: &bool) {
-    let x = current.pos.x;
-    let y = current.pos.y;
+pub fn draw_tetromino(scl: f32, current: &Tetromino, pos: &Vec2, ghost: bool, debug: &bool) {
+    let x = pos.x;
+    let y = pos.y;
     let w = (WELL_CELL - WELL_CELL_GAP) * scl;
+    let color = if ghost {
+        current.ghost_color
+    } else {
+        current.color
+    };
 
     match current.kind {
         TetrominoType::I | TetrominoType::O => {
@@ -34,7 +39,7 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino, debug: &bool) {
                     let dx = x + r as f32;
                     let dy = WELL_HEIGHT as f32 - (y + c as f32);
                     if current.mat4.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
-                        draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
+                        draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, color);
                     } else {
                         if *debug {
                             draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, PINK);
@@ -49,7 +54,7 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino, debug: &bool) {
                     let dx = x + r as f32;
                     let dy = WELL_HEIGHT as f32 - (y + c as f32);
                     if current.mat.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
-                        draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, current.color);
+                        draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, color);
                     } else {
                         if *debug {
                             draw_rectangle(dx as f32 * scl, dy as f32 * scl, w, w, PINK);
@@ -100,7 +105,8 @@ pub fn draw(gs: &GameState) {
     clear_background(BLACK);
 
     draw_well(gs.scl);
-    draw_tetromino(gs.scl, &gs.current, &gs.debug);
+    draw_tetromino(gs.scl, &gs.current, &gs.ghost.pos, true, &gs.debug);
+    draw_tetromino(gs.scl, &gs.current, &gs.current.pos, false, &gs.debug);
     draw_placed(gs.scl, &gs.placed_blocks);
     draw_score(gs.scl, &gs.score);
 

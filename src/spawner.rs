@@ -28,15 +28,36 @@ const O: Mat4 = const_mat4!(
     [0.0, 1.0, 1.0, 0.0]
 );
 
-pub fn tetromino_color(t: &TetrominoType) -> Color {
+pub fn tetromino_color(t: &TetrominoType) -> (Color, Color) {
     match t {
-        TetrominoType::J => BLUE,
-        TetrominoType::L => ORANGE,
-        TetrominoType::S => GREEN,
-        TetrominoType::T => PURPLE,
-        TetrominoType::Z => RED,
-        TetrominoType::I => SKYBLUE,
-        TetrominoType::O => YELLOW,
+        TetrominoType::J => (
+            Color::from_rgba(0, 0, 255, 255),
+            Color::from_rgba(0, 0, 255, 50),
+        ),
+        TetrominoType::L => (
+            Color::from_rgba(255, 165, 0, 255),
+            Color::from_rgba(255, 165, 0, 50),
+        ),
+        TetrominoType::S => (
+            Color::from_rgba(0, 255, 0, 255),
+            Color::from_rgba(0, 255, 0, 50),
+        ),
+        TetrominoType::T => (
+            Color::from_rgba(128, 0, 128, 255),
+            Color::from_rgba(128, 0, 128, 50),
+        ),
+        TetrominoType::Z => (
+            Color::from_rgba(255, 0, 0, 255),
+            Color::from_rgba(255, 0, 0, 50),
+        ),
+        TetrominoType::I => (
+            Color::from_rgba(0, 255, 255, 255),
+            Color::from_rgba(0, 255, 255, 50),
+        ),
+        TetrominoType::O => (
+            Color::from_rgba(255, 255, 0, 255),
+            Color::from_rgba(255, 255, 0, 50),
+        ),
     }
 }
 
@@ -55,8 +76,9 @@ pub fn tetromino_set() -> Vec<Tetromino> {
         let width = 3;
         let pos = vec2(
             f32::floor(5.0 - width as f32 / 2.0),
-            f32::floor(WELL_HEIGHT as f32 - width as f32 / 2.0) + 2.0,
+            f32::floor(WELL_HEIGHT as f32 - width as f32 / 2.0) + 1.0,
         );
+        let (color, ghost_color) = tetromino_color(t);
         tetrominos.push(Tetromino {
             pos,
             spawn_pos: pos,
@@ -65,12 +87,17 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             mat4: Mat4::ZERO,
             width,
             kind: *t,
-            color: tetromino_color(t),
+            color,
+            ghost_color,
         });
     }
     for (t, mat) in mats2.iter() {
         let width = 4;
-        let pos = vec2(f32::floor(5.0 - width as f32 / 2.0), 20.0);
+        let pos = vec2(
+            f32::floor(5.0 - width as f32 / 2.0),
+            f32::floor(WELL_HEIGHT as f32 - width as f32 / 2.0) + 1.0,
+        );
+        let (color, ghost_color) = tetromino_color(t);
         tetrominos.push(Tetromino {
             pos,
             spawn_pos: pos,
@@ -79,7 +106,8 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             mat4: *mat,
             width,
             kind: *t,
-            color: tetromino_color(t),
+            color,
+            ghost_color,
         });
     }
 

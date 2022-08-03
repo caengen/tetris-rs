@@ -1,4 +1,4 @@
-use crate::components::AUTO_SHIFT_DELAY;
+use crate::components::{Ghost, AUTO_SHIFT_DELAY};
 
 use super::{
     collision::can_translate, srs, Block, GameState, Tetromino, AUTO_SHIFT_TIMOUT, UPDATE_DELAY,
@@ -6,17 +6,21 @@ use super::{
 };
 use macroquad::prelude::{get_time, is_key_down, is_key_pressed, is_key_released, vec2, KeyCode};
 
-fn move_left(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>) {
+fn move_left(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mut Ghost) {
     let new_pos = vec2(tetromino.pos.x - 1.0, tetromino.pos.y);
     if can_translate(&tetromino, placed, &new_pos) {
         tetromino.pos = new_pos;
+        ghost.pos.x = new_pos.x;
+        ghost.dirty = true;
     }
 }
 
-fn move_right(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>) {
+fn move_right(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mut Ghost) {
     let new_pos = vec2(tetromino.pos.x + 1.0, tetromino.pos.y);
     if can_translate(&tetromino, placed, &new_pos) {
         tetromino.pos = new_pos;
+        ghost.pos.x = new_pos.x;
+        ghost.dirty = true;
     }
 }
 
@@ -30,7 +34,7 @@ pub fn input(gs: &mut GameState) {
     if is_key_down(KeyCode::Left) {
         if gs.key_info.auto_shift_start == 0. {
             gs.key_info.auto_shift_start = time;
-            move_left(&mut gs.current, &gs.placed_blocks);
+            move_left(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
             gs.key_info.auto_shift = (Some(KeyCode::Left), time);
         }
 
@@ -39,15 +43,15 @@ pub fn input(gs: &mut GameState) {
             match key {
                 Some(k) => {
                     if k == KeyCode::Left && time - last_move > AUTO_SHIFT_TIMOUT {
-                        move_left(&mut gs.current, &gs.placed_blocks);
+                        move_left(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
                         gs.key_info.auto_shift.1 = time;
                     } else if k == KeyCode::Right {
-                        move_left(&mut gs.current, &gs.placed_blocks);
+                        move_left(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
                         gs.key_info.auto_shift = (Some(KeyCode::Left), time);
                     }
                 }
                 _ => {
-                    move_left(&mut gs.current, &gs.placed_blocks);
+                    move_left(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
                     gs.key_info.auto_shift = (Some(KeyCode::Left), time);
                 }
             }
@@ -61,7 +65,7 @@ pub fn input(gs: &mut GameState) {
     if is_key_down(KeyCode::Right) {
         if gs.key_info.auto_shift_start == 0. {
             gs.key_info.auto_shift_start = time;
-            move_right(&mut gs.current, &gs.placed_blocks);
+            move_right(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
             gs.key_info.auto_shift = (Some(KeyCode::Right), time);
         }
 
@@ -70,22 +74,22 @@ pub fn input(gs: &mut GameState) {
             match key {
                 Some(k) => {
                     if k == KeyCode::Right && time - last_move > AUTO_SHIFT_TIMOUT {
-                        move_right(&mut gs.current, &gs.placed_blocks);
+                        move_right(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
                         gs.key_info.auto_shift.1 = time;
                     } else if k == KeyCode::Left {
-                        move_right(&mut gs.current, &gs.placed_blocks);
+                        move_right(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
                         gs.key_info.auto_shift = (Some(KeyCode::Right), time);
                     }
                 }
                 _ => {
-                    move_right(&mut gs.current, &gs.placed_blocks);
+                    move_right(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
                     gs.key_info.auto_shift = (Some(KeyCode::Right), time);
                 }
             }
         }
     }
     if is_key_pressed(KeyCode::Up) {
-        srs::rotate(&mut gs.current, &gs.placed_blocks);
+        srs::rotate(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
     }
     if is_key_down(KeyCode::Down) {
         if time - gs.last_update < (UPDATE_DELAY / 5.0) {

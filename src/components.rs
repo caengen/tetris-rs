@@ -43,6 +43,7 @@ pub struct Tetromino {
     pub width: i32,
     pub kind: TetrominoType,
     pub color: Color,
+    pub ghost_color: Color,
 }
 
 impl Tetromino {
@@ -79,6 +80,11 @@ impl Tetromino {
     }
 }
 
+pub struct Ghost {
+    pub pos: Vec2,
+    pub dirty: bool,
+}
+
 #[derive(Clone, Copy)]
 pub struct Block {
     pub color: Color,
@@ -101,6 +107,7 @@ pub struct GameState {
     pub placed_blocks: Vec<Option<Block>>,
     pub next: Vec<Tetromino>,
     pub current: Tetromino,
+    pub ghost: Ghost,
     pub tetrominos: Vec<Tetromino>,
     pub last_update: f64,
     pub score: Score,
@@ -119,6 +126,10 @@ pub fn get_game_state() -> GameState {
         next,
         tetrominos,
         current,
+        ghost: Ghost {
+            pos: current.pos,
+            dirty: true,
+        },
         last_update: 0.0,
         score: Score {
             level: 1,

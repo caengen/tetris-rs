@@ -77,9 +77,12 @@ pub fn vertical_block_collision(
         }
     })
 }
-pub fn should_commit_tetromino(tetromino: &Tetromino, placed: &Vec<Option<Block>>) -> bool {
-    bottom_collision(tetromino, &tetromino.pos)
-        || vertical_block_collision(placed, tetromino, &tetromino.pos)
+pub fn should_commit_tetromino(
+    tetromino: &Tetromino,
+    pos: &Vec2,
+    placed: &Vec<Option<Block>>,
+) -> bool {
+    bottom_collision(tetromino, pos) || vertical_block_collision(placed, tetromino, pos)
 }
 
 pub fn can_translate(tetromino: &Tetromino, placed: &Vec<Option<Block>>, new_pos: &Vec2) -> bool {
