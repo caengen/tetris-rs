@@ -1,6 +1,6 @@
 use macroquad::prelude::{
-    clear_background, draw_circle, draw_rectangle, draw_text, Vec2, BLACK, BLUE, GREEN, PINK, RED,
-    WHITE,
+    clear_background, draw_circle, draw_rectangle, draw_text, vec2, Vec2, BLACK, BLUE, GREEN, PINK,
+    RED, WHITE,
 };
 
 use super::{
@@ -73,6 +73,21 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino, pos: &Vec2, ghost: bool, de
     }
 }
 
+fn draw_next(scl: f32, next: &Vec<Tetromino>) {
+    let scl_delta = 2.0;
+    let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
+
+    draw_text("Next", ui_x, 90.0, 1. * scl, WHITE);
+    for (i, t) in next.iter().enumerate() {
+        let y_dis = WELL_HEIGHT as f32 - 10.0 - (4.0 * i as f32);
+        let pos = vec2((WELL_WIDTH as f32 + 1.0) * scl_delta, y_dis);
+        draw_tetromino(scl / scl_delta, t, &pos, false, &false);
+        if i >= 5 {
+            break;
+        }
+    }
+}
+
 fn draw_placed(scl: f32, placed: &Vec<Option<Block>>) {
     let w = (WELL_CELL - WELL_CELL_GAP) * scl;
     for (idx, block) in placed.iter().enumerate() {
@@ -108,6 +123,7 @@ pub fn draw(gs: &GameState) {
     draw_tetromino(gs.scl, &gs.current, &gs.ghost.pos, true, &gs.debug);
     draw_tetromino(gs.scl, &gs.current, &gs.current.pos, false, &gs.debug);
     draw_placed(gs.scl, &gs.placed_blocks);
+    draw_next(gs.scl, &gs.next);
     draw_score(gs.scl, &gs.score);
 
     if gs.debug {

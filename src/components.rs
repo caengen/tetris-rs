@@ -5,7 +5,7 @@ use macroquad::{
 };
 use std::slice::Iter;
 
-const TETROMINO_SEED: u64 = 492750437;
+const TETROMINO_SEED: u64 = 792164921846;
 
 pub const SCREEN_WIDTH: f32 = 300.0;
 pub const SCREEN_HEIGHT: f32 = 1200.0;
