@@ -101,6 +101,9 @@ pub fn input(gs: &mut GameState) {
         let new_pos = t.pos + vec2(0.0, -1.0);
         gs.current.pos = new_pos;
     }
+    if is_key_pressed(KeyCode::Space) && !gs.ghost.dirty {
+        gs.current.pos = gs.ghost.pos;
+    }
     if is_key_pressed(KeyCode::G) {
         gs.debug = !gs.debug;
     }
