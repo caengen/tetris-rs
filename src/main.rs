@@ -8,7 +8,7 @@ use draw::*;
 mod input;
 use input::*;
 mod collision;
-mod gravity;
+mod gravity_system;
 mod srs;
 
 pub fn xy_idx(x: f32, y: f32) -> usize {
@@ -20,9 +20,13 @@ pub fn rel_xy_idx(x: f32, y: f32, w: f32) -> usize {
 }
 
 fn update(gs: &mut GameState) {
+    let time = get_time();
+    let delta = get_frame_time();
+
     if gs.current.locking {
-        gs.current.lock_timer += get_frame_time();
+        gs.current.lock_timer += delta;
     }
+    gs.gravity.meter += delta;
 
     let on_ground = should_commit_tetromino(&gs.current, &gs.current.pos, &gs.placed_blocks);
     if on_ground {
@@ -48,7 +52,7 @@ fn update(gs: &mut GameState) {
         let completed_lines = collision::completed_lines(&gs.placed_blocks);
         if completed_lines.len() > 0 {
             spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
-            gravity::apply_gravity(&mut gs.placed_blocks, &completed_lines);
+            gravity_system::apply_gravity(&mut gs.placed_blocks, &completed_lines);
             match completed_lines.len() {
                 1 => gs.score.val += 1,
                 2 => gs.score.val += 3,
@@ -74,21 +78,19 @@ fn update(gs: &mut GameState) {
     }
 
     // move downwards
-    let t = &gs.current;
-    let new_pos = t.pos + vec2(0.0, -1.0);
+    if gs.gravity.meter > gs.gravity.max {
+        let t = &gs.current;
+        let new_pos = t.pos + vec2(0.0, -1.0);
+        gs.last_update = time;
 
-    let time = get_time();
-
-    if time - gs.last_update < UPDATE_DELAY {
-        return;
-    }
-    gs.last_update = time;
-
-    if !on_ground {
-        gs.current.pos = new_pos;
-        if gs.current.locking {
-            gs.current.lock_timer = 0.0;
+        if !on_ground {
+            gs.current.pos = new_pos;
+            if gs.current.locking {
+                gs.current.lock_timer = 0.0;
+            }
         }
+
+        gs.gravity.meter = 0.0;
     }
 }
 

@@ -1,8 +1,7 @@
-use crate::components::{Ghost, AUTO_SHIFT_DELAY};
+use crate::components::{get_level_gravity_max, Ghost, AUTO_SHIFT_DELAY, SOFT_DROP_GRAVITY};
 
 use super::{
-    collision::can_translate, srs, Block, GameState, Tetromino, AUTO_SHIFT_TIMOUT, UPDATE_DELAY,
-    WELL_WIDTH,
+    collision::can_translate, srs, Block, GameState, Tetromino, AUTO_SHIFT_TIMEOUT, WELL_WIDTH,
 };
 use macroquad::prelude::{get_time, is_key_down, is_key_pressed, is_key_released, vec2, KeyCode};
 
@@ -48,7 +47,7 @@ pub fn input(gs: &mut GameState) {
             let (key, last_move) = gs.key_info.auto_shift;
             match key {
                 Some(k) => {
-                    if k == KeyCode::Left && time - last_move > AUTO_SHIFT_TIMOUT {
+                    if k == KeyCode::Left && time - last_move > AUTO_SHIFT_TIMEOUT {
                         move_left(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
                         gs.key_info.auto_shift.1 = time;
                     } else if k == KeyCode::Right {
@@ -79,7 +78,7 @@ pub fn input(gs: &mut GameState) {
             let (key, last_move) = gs.key_info.auto_shift;
             match key {
                 Some(k) => {
-                    if k == KeyCode::Right && time - last_move > AUTO_SHIFT_TIMOUT {
+                    if k == KeyCode::Right && time - last_move > AUTO_SHIFT_TIMEOUT {
                         move_right(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
                         gs.key_info.auto_shift.1 = time;
                     } else if k == KeyCode::Left {
@@ -97,16 +96,12 @@ pub fn input(gs: &mut GameState) {
     if is_key_pressed(KeyCode::Up) {
         srs::rotate(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
     }
-    // if is_key_down(KeyCode::Down) {
-    //     if time - gs.last_update < (UPDATE_DELAY / 5.0) {
-    //         return;
-    //     }
-    //     gs.last_update = time;
-
-    //     let t = &gs.current;
-    //     let new_pos = t.pos + vec2(0.0, -1.0);
-    //     gs.current.pos = new_pos;
-    // }
+    if is_key_down(KeyCode::Down) {
+        gs.gravity.max = SOFT_DROP_GRAVITY;
+    }
+    if is_key_released(KeyCode::Down) {
+        gs.gravity.max = get_level_gravity_max(gs.score.level);
+    }
     if is_key_pressed(KeyCode::Space) && !gs.ghost.dirty {
         gs.current.pos = gs.ghost.pos;
     }
