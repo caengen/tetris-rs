@@ -21,6 +21,7 @@ pub const WELL_CELL: f32 = 1.0;
 pub const UPDATE_DELAY: f64 = 0.5;
 pub const AUTO_SHIFT_TIMOUT: f64 = 0.075;
 pub const AUTO_SHIFT_DELAY: f64 = 0.3;
+pub const LOCK_DELAY: f32 = 0.5;
 
 #[derive(Copy, Clone)]
 pub enum TetrominoType {
@@ -44,6 +45,8 @@ pub struct Tetromino {
     pub kind: TetrominoType,
     pub color: Color,
     pub ghost_color: Color,
+    pub lock_timer: f32,
+    pub locking: bool,
 }
 
 impl Tetromino {

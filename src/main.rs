@@ -20,7 +20,15 @@ pub fn rel_xy_idx(x: f32, y: f32, w: f32) -> usize {
 }
 
 fn update(gs: &mut GameState) {
-    if should_commit_tetromino(&gs.current, &gs.current.pos, &gs.placed_blocks) {
+    if gs.current.locking {
+        gs.current.lock_timer += get_frame_time();
+    }
+
+    let on_ground = should_commit_tetromino(&gs.current, &gs.current.pos, &gs.placed_blocks);
+    if on_ground {
+        gs.current.locking = true;
+    }
+    if on_ground && gs.current.locking && gs.current.lock_timer >= LOCK_DELAY {
         if gs.current.pos.cmpeq(gs.current.spawn_pos).all() {
             gs.score.topout = true;
             return;
@@ -76,7 +84,12 @@ fn update(gs: &mut GameState) {
     }
     gs.last_update = time;
 
-    gs.current.pos = new_pos;
+    if !on_ground {
+        gs.current.pos = new_pos;
+        if gs.current.locking {
+            gs.current.lock_timer = 0.0;
+        }
+    }
 }
 
 #[macroquad::main("tetris.rs")]

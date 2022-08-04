@@ -12,6 +12,9 @@ fn move_left(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mut
         tetromino.pos = new_pos;
         ghost.pos.x = new_pos.x;
         ghost.dirty = true;
+        // if tetromino.locking {
+        //     tetromino.lock_timer = 0.0;
+        // }
     }
 }
 
@@ -21,6 +24,9 @@ fn move_right(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
         tetromino.pos = new_pos;
         ghost.pos.x = new_pos.x;
         ghost.dirty = true;
+        // if tetromino.locking {
+        //     tetromino.lock_timer = 0.0;
+        // }
     }
 }
 
@@ -91,16 +97,16 @@ pub fn input(gs: &mut GameState) {
     if is_key_pressed(KeyCode::Up) {
         srs::rotate(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
     }
-    if is_key_down(KeyCode::Down) {
-        if time - gs.last_update < (UPDATE_DELAY / 5.0) {
-            return;
-        }
-        gs.last_update = time;
+    // if is_key_down(KeyCode::Down) {
+    //     if time - gs.last_update < (UPDATE_DELAY / 5.0) {
+    //         return;
+    //     }
+    //     gs.last_update = time;
 
-        let t = &gs.current;
-        let new_pos = t.pos + vec2(0.0, -1.0);
-        gs.current.pos = new_pos;
-    }
+    //     let t = &gs.current;
+    //     let new_pos = t.pos + vec2(0.0, -1.0);
+    //     gs.current.pos = new_pos;
+    // }
     if is_key_pressed(KeyCode::Space) && !gs.ghost.dirty {
         gs.current.pos = gs.ghost.pos;
     }

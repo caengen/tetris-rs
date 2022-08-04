@@ -1,3 +1,5 @@
+use crate::components::LOCK_DELAY;
+
 use super::{xy_idx, Block, Tetromino, WELL_HEIGHT, WELL_WIDTH};
 use macroquad::prelude::{debug, Vec2};
 
@@ -82,7 +84,7 @@ pub fn should_commit_tetromino(
     pos: &Vec2,
     placed: &Vec<Option<Block>>,
 ) -> bool {
-    bottom_collision(tetromino, pos) || vertical_block_collision(placed, tetromino, pos)
+    (bottom_collision(tetromino, pos) || vertical_block_collision(placed, tetromino, pos))
 }
 
 pub fn can_translate(tetromino: &Tetromino, placed: &Vec<Option<Block>>, new_pos: &Vec2) -> bool {

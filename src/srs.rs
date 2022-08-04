@@ -40,6 +40,9 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
                 tetromino.mat4 = new_tetromino.mat4;
                 tetromino.rot_index = (tetromino.rot_index + 1) % 4;
                 ghost.dirty = true;
+                if tetromino.locking {
+                    tetromino.lock_timer = 0.0;
+                }
             } else {
                 let res = mat3_super_kick(&I_KICKS, &new_tetromino, placed);
                 match res {
@@ -48,6 +51,9 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
                         tetromino.pos = new_pos;
                         tetromino.rot_index = (tetromino.rot_index + 1) % 4;
                         ghost.dirty = true;
+                        if tetromino.locking {
+                            tetromino.lock_timer = 0.0;
+                        }
                     }
                     Err(str) => {
                         debug!("{}", str);
@@ -64,6 +70,9 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
                 tetromino.mat = new_tetromino.mat;
                 tetromino.rot_index = (tetromino.rot_index + 1) % 4;
                 ghost.dirty = true;
+                if tetromino.locking {
+                    tetromino.lock_timer = 0.0;
+                }
             } else {
                 let res = mat3_super_kick(&KICKS, &new_tetromino, placed);
                 match res {
@@ -72,6 +81,9 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
                         tetromino.pos = new_pos;
                         tetromino.rot_index = (tetromino.rot_index + 1) % 4;
                         ghost.dirty = true;
+                        if tetromino.locking {
+                            tetromino.lock_timer = 0.0;
+                        }
                     }
                     Err(str) => {
                         debug!("{}", str);

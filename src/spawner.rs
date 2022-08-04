@@ -89,6 +89,8 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             kind: *t,
             color,
             ghost_color,
+            lock_timer: 0.0,
+            locking: false,
         });
     }
     for (t, mat) in mats2.iter() {
@@ -108,6 +110,8 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             kind: *t,
             color,
             ghost_color,
+            lock_timer: 0.0,
+            locking: false,
         });
     }
 
