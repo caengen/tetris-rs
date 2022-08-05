@@ -9,6 +9,7 @@ mod input;
 use input::*;
 mod collision;
 mod gravity_system;
+use gravity_system::*;
 mod srs;
 
 pub fn xy_idx(x: f32, y: f32) -> usize {
@@ -33,8 +34,39 @@ fn update_ghost(gs: &mut GameState) {
     gs.ghost.pos = pos;
 }
 
+fn commit_tetromino(gs: &mut GameState) {
+    if gs.current.pos.cmpeq(gs.current.spawn_pos).all() {
+        gs.score.topout = true;
+        return;
+    }
+    let points = gs.current.relative_points(&gs.current.pos);
+
+    for p in points.iter() {
+        gs.placed_blocks[xy_idx(p.x, p.y)] = Some(Block {
+            color: gs.current.color,
+        });
+    }
+
+    gs.current = gs.next.drain(0..1).collect::<Vec<Tetromino>>()[0];
+    gs.next.push(spawner::spawn_tetromino(&gs.tetrominos));
+    gs.ghost.dirty = true;
+    gs.gravity.meter = 0.0;
+
+    let completed_lines = collision::completed_lines(&gs.placed_blocks);
+    if completed_lines.len() > 0 {
+        spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
+        apply_gravity(&mut gs.placed_blocks, &completed_lines);
+        match completed_lines.len() {
+            1 => gs.score.val += 1,
+            2 => gs.score.val += 3,
+            3 => gs.score.val += 5,
+            4 => gs.score.val += 8,
+            _ => {}
+        }
+    }
+}
+
 fn update(gs: &mut GameState) {
-    let time = get_time();
     let delta = get_frame_time();
     gs.gravity.meter += delta;
 
@@ -42,62 +74,24 @@ fn update(gs: &mut GameState) {
         update_ghost(gs);
     }
 
+    // only add if locked on previous frame
     if gs.current.locking {
         gs.current.lock_timer += delta;
     }
 
-    let on_ground = should_commit_tetromino(&gs.current, &gs.current.pos, &gs.placed_blocks);
-    if on_ground {
+    let on_surface = should_commit_tetromino(&gs.current, &gs.current.pos, &gs.placed_blocks);
+    if on_surface {
         gs.current.locking = true;
     }
 
-    if on_ground
+    if on_surface
         && (gs.current.sonic_lock || (gs.current.locking && gs.current.lock_timer >= LOCK_DELAY))
     {
-        if gs.current.pos.cmpeq(gs.current.spawn_pos).all() {
-            gs.score.topout = true;
-            return;
-        }
-        let points = gs.current.relative_points(&gs.current.pos);
-
-        for p in points.iter() {
-            gs.placed_blocks[xy_idx(p.x, p.y)] = Some(Block {
-                color: gs.current.color,
-            });
-        }
-
-        gs.current = gs.next.drain(0..1).collect::<Vec<Tetromino>>()[0];
-        gs.next.push(spawner::spawn_tetromino(&gs.tetrominos));
-        gs.ghost.dirty = true;
-        gs.gravity.meter = 0.0;
-
-        let completed_lines = collision::completed_lines(&gs.placed_blocks);
-        if completed_lines.len() > 0 {
-            spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
-            gravity_system::apply_gravity(&mut gs.placed_blocks, &completed_lines);
-            match completed_lines.len() {
-                1 => gs.score.val += 1,
-                2 => gs.score.val += 3,
-                3 => gs.score.val += 5,
-                4 => gs.score.val += 8,
-                _ => {}
-            }
-        }
+        commit_tetromino(gs);
     }
 
-    // move downwards
-    if gs.gravity.meter >= gs.gravity.max {
-        let t = &gs.current;
-        let new_pos = t.pos + vec2(0.0, -1.0);
-        gs.last_update = time;
-
-        if !on_ground {
-            gs.current.pos = new_pos;
-            gs.gravity.meter = 0.0;
-            if gs.current.locking {
-                gs.current.lock_timer = 0.0;
-            }
-        }
+    if !on_surface && gs.gravity.meter >= gs.gravity.max {
+        move_downwards(gs);
     }
 }
 

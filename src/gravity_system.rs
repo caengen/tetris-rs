@@ -1,9 +1,21 @@
-use macroquad::prelude::debug;
+use macroquad::prelude::{debug, get_time, vec2};
 
 use super::{
     components::{WELL_HEIGHT, WELL_WIDTH},
-    xy_idx, Block,
+    xy_idx, Block, GameState,
 };
+
+pub fn move_downwards(gs: &mut GameState) {
+    let t = &gs.current;
+    let new_pos = t.pos + vec2(0.0, -1.0);
+    gs.last_update = get_time();
+
+    gs.current.pos = new_pos;
+    gs.gravity.meter = 0.0;
+    if gs.current.locking {
+        gs.current.lock_timer = 0.0;
+    }
+}
 
 pub fn apply_gravity(placed: &mut Vec<Option<Block>>, removed_lines: &Vec<usize>) {
     let y_delta = removed_lines.len();
