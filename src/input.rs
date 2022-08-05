@@ -1,4 +1,7 @@
-use crate::components::{get_level_gravity_max, Ghost, AUTO_SHIFT_DELAY, SOFT_DROP_GRAVITY};
+use crate::components::{
+    get_level_gravity_max, Ghost, AUTO_SHIFT_DELAY, HARD_DROP_GRAVITY, LOCK_DELAY,
+    SOFT_DROP_GRAVITY,
+};
 
 use super::{
     collision::can_translate, srs, Block, GameState, Tetromino, AUTO_SHIFT_TIMEOUT, WELL_WIDTH,
@@ -99,10 +102,11 @@ pub fn input(gs: &mut GameState) {
     if is_key_down(KeyCode::Down) {
         gs.gravity.max = SOFT_DROP_GRAVITY;
     }
-    if is_key_released(KeyCode::Down) {
+    if is_key_released(KeyCode::Down) || is_key_released(KeyCode::Space) {
         gs.gravity.max = get_level_gravity_max(gs.score.level);
     }
     if is_key_pressed(KeyCode::Space) && !gs.ghost.dirty {
+        gs.current.sonic_lock = true;
         gs.current.pos = gs.ghost.pos;
     }
     if is_key_pressed(KeyCode::G) {

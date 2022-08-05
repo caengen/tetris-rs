@@ -20,7 +20,7 @@ pub const WELL_CELL: f32 = 1.0;
 // timers in seconds
 pub const AUTO_SHIFT_TIMEOUT: f64 = 0.075;
 pub const AUTO_SHIFT_DELAY: f64 = 0.3;
-pub const LOCK_DELAY: f32 = 0.5;
+pub const LOCK_DELAY: f32 = 0.3;
 pub const HARD_DROP_GRAVITY: f32 = 20.0;
 pub const SOFT_DROP_GRAVITY: f32 = 20.0 / 60.0;
 
@@ -48,6 +48,7 @@ pub struct Tetromino {
     pub ghost_color: Color,
     pub lock_timer: f32,
     pub locking: bool,
+    pub sonic_lock: bool,
 }
 
 impl Tetromino {

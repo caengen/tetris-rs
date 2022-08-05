@@ -61,7 +61,7 @@ pub fn left_block_collision(
 
 pub fn bottom_collision(tetromino: &Tetromino, pos: &Vec2) -> bool {
     let points = tetromino.relative_points(pos);
-    points.iter().any(|p| p.y == (WELL_HEIGHT - 1) as f32)
+    points.iter().any(|p| p.y >= (WELL_HEIGHT - 1) as f32)
 }
 
 pub fn vertical_block_collision(
@@ -88,6 +88,10 @@ pub fn should_commit_tetromino(
 }
 
 pub fn can_translate(tetromino: &Tetromino, placed: &Vec<Option<Block>>, new_pos: &Vec2) -> bool {
+    if bottom_collision(tetromino, new_pos) {
+        return false;
+    }
+
     if new_pos.x < tetromino.pos.x {
         return !wall_collision(tetromino, new_pos)
             && !left_block_collision(placed, tetromino, &tetromino.pos);

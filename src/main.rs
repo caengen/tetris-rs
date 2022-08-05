@@ -19,20 +19,41 @@ pub fn rel_xy_idx(x: f32, y: f32, w: f32) -> usize {
     (y as usize * w as usize) + x as usize
 }
 
+fn update_ghost(gs: &mut GameState) {
+    gs.ghost.dirty = false;
+    let mut pos = gs.current.pos;
+    while pos.y >= 0.0 as f32 {
+        if should_commit_tetromino(&gs.current, &pos, &gs.placed_blocks) {
+            break;
+        }
+        pos.y -= 1.0;
+    }
+
+    debug!("updating ghost {}", pos);
+    gs.ghost.pos = pos;
+}
+
 fn update(gs: &mut GameState) {
     let time = get_time();
     let delta = get_frame_time();
+    gs.gravity.meter += delta;
+
+    if gs.ghost.dirty {
+        update_ghost(gs);
+    }
 
     if gs.current.locking {
         gs.current.lock_timer += delta;
     }
-    gs.gravity.meter += delta;
 
     let on_ground = should_commit_tetromino(&gs.current, &gs.current.pos, &gs.placed_blocks);
     if on_ground {
         gs.current.locking = true;
     }
-    if on_ground && gs.current.locking && gs.current.lock_timer >= LOCK_DELAY {
+
+    if on_ground
+        && (gs.current.sonic_lock || (gs.current.locking && gs.current.lock_timer >= LOCK_DELAY))
+    {
         if gs.current.pos.cmpeq(gs.current.spawn_pos).all() {
             gs.score.topout = true;
             return;
@@ -48,6 +69,7 @@ fn update(gs: &mut GameState) {
         gs.current = gs.next.drain(0..1).collect::<Vec<Tetromino>>()[0];
         gs.next.push(spawner::spawn_tetromino(&gs.tetrominos));
         gs.ghost.dirty = true;
+        gs.gravity.meter = 0.0;
 
         let completed_lines = collision::completed_lines(&gs.placed_blocks);
         if completed_lines.len() > 0 {
@@ -63,34 +85,19 @@ fn update(gs: &mut GameState) {
         }
     }
 
-    if gs.ghost.dirty {
-        gs.ghost.dirty = false;
-        let mut pos = gs.current.pos;
-        while pos.y >= 0.0 as f32 {
-            if should_commit_tetromino(&gs.current, &pos, &gs.placed_blocks) {
-                break;
-            }
-            pos.y -= 1.0;
-        }
-
-        debug!("updating ghost {}", pos);
-        gs.ghost.pos = pos;
-    }
-
     // move downwards
-    if gs.gravity.meter > gs.gravity.max {
+    if gs.gravity.meter >= gs.gravity.max {
         let t = &gs.current;
         let new_pos = t.pos + vec2(0.0, -1.0);
         gs.last_update = time;
 
         if !on_ground {
             gs.current.pos = new_pos;
+            gs.gravity.meter = 0.0;
             if gs.current.locking {
                 gs.current.lock_timer = 0.0;
             }
         }
-
-        gs.gravity.meter = 0.0;
     }
 }
 
