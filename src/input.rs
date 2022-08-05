@@ -105,12 +105,12 @@ pub fn input(gs: &mut GameState) {
     if is_key_down(KeyCode::Down) {
         gs.gravity.max = SOFT_DROP_GRAVITY;
     }
-    if is_key_released(KeyCode::Down) || is_key_released(KeyCode::Space) {
+    if is_key_released(KeyCode::Down) {
         gs.gravity.max = get_level_gravity_max(gs.score.level);
     }
     if is_key_pressed(KeyCode::Space) && !gs.ghost.dirty {
         gs.current.sonic_lock = true;
-        gs.current.pos = gs.ghost.pos;
+        gs.current.pos = gs.ghost.pos
     }
     if is_key_pressed(KeyCode::C) {
         if gs.current.held {

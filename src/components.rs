@@ -21,8 +21,8 @@ pub const WELL_CELL: f32 = 1.0;
 pub const AUTO_SHIFT_TIMEOUT: f64 = 0.075;
 pub const AUTO_SHIFT_DELAY: f64 = 0.3;
 pub const LOCK_DELAY: f32 = 0.3;
-pub const HARD_DROP_GRAVITY: f32 = 20.0;
-pub const SOFT_DROP_GRAVITY: f32 = 20.0 / 60.0;
+pub const HARD_DROP_GRAVITY: f32 = 1.0;
+pub const SOFT_DROP_GRAVITY: f32 = 20.0;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum TetrominoType {
@@ -129,7 +129,7 @@ pub struct GameState {
 }
 
 pub fn get_level_gravity_max(level: usize) -> f32 {
-    (48.0 - (level as f32 * 5.0)) / 60.0
+    48.0 - (level as f32 * 5.0)
 }
 
 pub fn get_game_state() -> GameState {

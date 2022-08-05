@@ -70,7 +70,7 @@ fn commit_tetromino(gs: &mut GameState) {
 
 fn update(gs: &mut GameState) {
     let delta = get_frame_time();
-    gs.gravity.meter += delta;
+    gs.gravity.meter += 1.0;
 
     if gs.ghost.dirty {
         update_ghost(gs);
