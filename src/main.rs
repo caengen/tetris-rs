@@ -10,6 +10,7 @@ use input::*;
 mod collision;
 mod gravity_system;
 use gravity_system::*;
+use spawner::drain_next;
 mod srs;
 
 pub fn xy_idx(x: f32, y: f32) -> usize {
@@ -47,10 +48,7 @@ fn commit_tetromino(gs: &mut GameState) {
         });
     }
 
-    gs.current = gs.next.drain(0..1).collect::<Vec<Tetromino>>()[0];
-    gs.next.push(spawner::spawn_tetromino(&gs.tetrominos));
-    gs.ghost.dirty = true;
-    gs.gravity.meter = 0.0;
+    gs.current = drain_next(gs);
 
     let completed_lines = collision::completed_lines(&gs.placed_blocks);
     if completed_lines.len() > 0 {

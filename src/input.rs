@@ -1,6 +1,9 @@
-use crate::components::{
-    get_level_gravity_max, Ghost, AUTO_SHIFT_DELAY, HARD_DROP_GRAVITY, LOCK_DELAY,
-    SOFT_DROP_GRAVITY,
+use crate::{
+    components::{
+        get_level_gravity_max, Ghost, AUTO_SHIFT_DELAY, HARD_DROP_GRAVITY, LOCK_DELAY,
+        SOFT_DROP_GRAVITY,
+    },
+    spawner::{drain_next, reset_transform},
 };
 
 use super::{
@@ -108,6 +111,23 @@ pub fn input(gs: &mut GameState) {
     if is_key_pressed(KeyCode::Space) && !gs.ghost.dirty {
         gs.current.sonic_lock = true;
         gs.current.pos = gs.ghost.pos;
+    }
+    if is_key_pressed(KeyCode::C) {
+        match gs.hold {
+            Some(hold) => {
+                let mut temp = gs.current;
+                gs.current = hold;
+                reset_transform(&mut temp);
+                gs.hold = Some(temp);
+            }
+            None => {
+                let mut hold = gs.current;
+                reset_transform(&mut hold);
+                gs.hold = Some(hold);
+                gs.current = drain_next(gs);
+            }
+        }
+        gs.ghost.dirty = true;
     }
     if is_key_pressed(KeyCode::G) {
         gs.debug = !gs.debug;

@@ -24,7 +24,7 @@ pub const LOCK_DELAY: f32 = 0.3;
 pub const HARD_DROP_GRAVITY: f32 = 20.0;
 pub const SOFT_DROP_GRAVITY: f32 = 20.0 / 60.0;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum TetrominoType {
     J,
     L,
@@ -123,6 +123,7 @@ pub struct GameState {
     pub score: Score,
     pub key_info: KeyInfo,
     pub gravity: Gravity,
+    pub hold: Option<Tetromino>,
 }
 
 pub fn get_level_gravity_max(level: usize) -> f32 {
@@ -159,5 +160,6 @@ pub fn get_game_state() -> GameState {
             meter: 0.0,
             max: get_level_gravity_max(0),
         },
+        hold: None,
     }
 }

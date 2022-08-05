@@ -73,15 +73,20 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino, pos: &Vec2, ghost: bool, de
     }
 }
 
-fn draw_hold(scl: f32, next: &Vec<Tetromino>) {
-    let scl_delta = 2.0;
-    let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
+fn draw_hold(scl: f32, hold: &Option<Tetromino>) {
+    match hold {
+        Some(hold) => {
+            let scl_delta = 2.0;
+            let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
 
-    draw_text("Hold", ui_x, 130.0, 1. * scl, WHITE);
-    draw_rectangle_lines(ui_x - 10.0, 105.0, 80.0, 80.0, 4.0, WHITE);
-    let y_dis = WELL_HEIGHT as f32 - 13.0;
-    let pos = vec2((WELL_WIDTH as f32 + 1.0) * scl_delta, y_dis);
-    draw_tetromino(scl / scl_delta, &next[0], &pos, false, &false);
+            draw_text("Hold", ui_x, 130.0, 1. * scl, WHITE);
+            draw_rectangle_lines(ui_x - 10.0, 105.0, 80.0, 80.0, 4.0, WHITE);
+            let y_dis = WELL_HEIGHT as f32 - 13.0;
+            let pos = vec2((WELL_WIDTH as f32 + 1.0) * scl_delta, y_dis);
+            draw_tetromino(scl / scl_delta, hold, &pos, false, &false);
+        }
+        _ => {}
+    }
 }
 
 fn draw_next(scl: f32, next: &Vec<Tetromino>) {
@@ -136,7 +141,7 @@ pub fn draw(gs: &GameState) {
     draw_tetromino(gs.scl, &gs.current, &gs.ghost.pos, true, &gs.debug);
     draw_tetromino(gs.scl, &gs.current, &gs.current.pos, false, &gs.debug);
     draw_placed(gs.scl, &gs.placed_blocks, &gs.debug);
-    draw_hold(gs.scl, &gs.next);
+    draw_hold(gs.scl, &gs.hold);
     draw_next(gs.scl, &gs.next);
     draw_score(gs.scl, &gs.score);
 
