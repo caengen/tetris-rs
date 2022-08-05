@@ -1,6 +1,6 @@
 use macroquad::prelude::{
-    clear_background, draw_circle, draw_rectangle, draw_text, vec2, Vec2, BLACK, BLUE, GRAY, GREEN,
-    PINK, RED, WHITE,
+    clear_background, draw_circle, draw_rectangle, draw_rectangle_lines, draw_text, vec2, Vec2,
+    BLACK, BLUE, GRAY, GREEN, PINK, RED, WHITE,
 };
 
 use super::{
@@ -73,13 +73,25 @@ pub fn draw_tetromino(scl: f32, current: &Tetromino, pos: &Vec2, ghost: bool, de
     }
 }
 
+fn draw_hold(scl: f32, next: &Vec<Tetromino>) {
+    let scl_delta = 2.0;
+    let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
+
+    draw_text("Hold", ui_x, 130.0, 1. * scl, WHITE);
+    draw_rectangle_lines(ui_x - 10.0, 105.0, 80.0, 80.0, 4.0, WHITE);
+    let y_dis = WELL_HEIGHT as f32 - 13.0;
+    let pos = vec2((WELL_WIDTH as f32 + 1.0) * scl_delta, y_dis);
+    draw_tetromino(scl / scl_delta, &next[0], &pos, false, &false);
+}
+
 fn draw_next(scl: f32, next: &Vec<Tetromino>) {
     let scl_delta = 2.0;
     let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
 
-    draw_text("Next", ui_x, 90.0, 1. * scl, WHITE);
+    draw_text("Next", ui_x, 230.0, 1. * scl, WHITE);
+    draw_rectangle_lines(ui_x - 10.0, 205.0, 80.0, 360.0, 4.0, WHITE);
     for (i, t) in next.iter().enumerate() {
-        let y_dis = WELL_HEIGHT as f32 - 10.0 - (4.0 * i as f32);
+        let y_dis = WELL_HEIGHT as f32 - 20.0 - (4.0 * i as f32);
         let pos = vec2((WELL_WIDTH as f32 + 1.0) * scl_delta, y_dis);
         draw_tetromino(scl / scl_delta, t, &pos, false, &false);
         if i >= 5 {
@@ -109,11 +121,11 @@ fn draw_score(scl: f32, score: &Score) {
     let score_txt = &format!("Score {}", score.val).to_string();
     let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
 
-    draw_text(level_txt, ui_x, 20.0, 1.5 * scl, WHITE);
-    draw_text(score_txt, ui_x, 40.0, 1.5 * scl, WHITE);
+    draw_text(level_txt, ui_x, 30.0, 1.25 * scl, WHITE);
+    draw_text(score_txt, ui_x, 60.0, 1.25 * scl, WHITE);
 
     if score.topout {
-        draw_text("Top out", ui_x, 60.0, 1.5 * scl, WHITE);
+        draw_text("Top out", ui_x, 70.0, 1.25 * scl, WHITE);
     }
 }
 
@@ -124,6 +136,7 @@ pub fn draw(gs: &GameState) {
     draw_tetromino(gs.scl, &gs.current, &gs.ghost.pos, true, &gs.debug);
     draw_tetromino(gs.scl, &gs.current, &gs.current.pos, false, &gs.debug);
     draw_placed(gs.scl, &gs.placed_blocks, &gs.debug);
+    draw_hold(gs.scl, &gs.next);
     draw_next(gs.scl, &gs.next);
     draw_score(gs.scl, &gs.score);
 
