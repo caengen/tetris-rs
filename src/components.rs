@@ -49,6 +49,7 @@ pub struct Tetromino {
     pub lock_timer: f32,
     pub locking: bool,
     pub sonic_lock: bool,
+    pub held: bool,
 }
 
 impl Tetromino {

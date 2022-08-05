@@ -113,10 +113,15 @@ pub fn input(gs: &mut GameState) {
         gs.current.pos = gs.ghost.pos;
     }
     if is_key_pressed(KeyCode::C) {
+        if gs.current.held {
+            return;
+        }
+
         match gs.hold {
             Some(hold) => {
                 let mut temp = gs.current;
                 gs.current = hold;
+                gs.current.held = true;
                 reset_transform(&mut temp);
                 gs.hold = Some(temp);
             }
@@ -125,6 +130,7 @@ pub fn input(gs: &mut GameState) {
                 reset_transform(&mut hold);
                 gs.hold = Some(hold);
                 gs.current = drain_next(gs);
+                gs.current.held = true;
             }
         }
         gs.ghost.dirty = true;

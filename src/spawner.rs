@@ -99,6 +99,7 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             lock_timer: 0.0,
             locking: false,
             sonic_lock: false,
+            held: false,
         });
     }
     for (t, mat) in mats2.iter() {
@@ -121,6 +122,7 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             lock_timer: 0.0,
             locking: false,
             sonic_lock: false,
+            held: false,
         });
     }
 
