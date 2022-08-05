@@ -122,15 +122,17 @@ fn draw_placed(scl: f32, placed: &Vec<Option<Block>>, debug: &bool) {
 }
 
 fn draw_score(scl: f32, score: &Score) {
-    let level_txt = &format!("Level {}", score.level).to_string();
+    let level_txt = &format!("Level {}", score.level + 1).to_string();
     let score_txt = &format!("Score {}", score.val).to_string();
+    let lines_txt = &format!("Lines {}", score.lines).to_string();
     let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
 
     draw_text(level_txt, ui_x, 30.0, 1.25 * scl, WHITE);
     draw_text(score_txt, ui_x, 60.0, 1.25 * scl, WHITE);
+    draw_text(lines_txt, ui_x, 90.0, 1.25 * scl, WHITE);
 
     if score.topout {
-        draw_text("Top out", ui_x, 70.0, 1.25 * scl, WHITE);
+        draw_text("Game Over", ui_x + 40.0, 90.0, 1.25 * scl, WHITE);
     }
 }
 

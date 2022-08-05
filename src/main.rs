@@ -54,11 +54,15 @@ fn commit_tetromino(gs: &mut GameState) {
     if completed_lines.len() > 0 {
         spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
         apply_gravity(&mut gs.placed_blocks, &completed_lines);
+        gs.score.lines += completed_lines.len();
+        if gs.score.lines % 10 == 0 {
+            gs.score.level += 1;
+        }
         match completed_lines.len() {
-            1 => gs.score.val += 1,
-            2 => gs.score.val += 3,
-            3 => gs.score.val += 5,
-            4 => gs.score.val += 8,
+            1 => gs.score.val += 1 * WELL_WIDTH,
+            2 => gs.score.val += 3 * WELL_WIDTH,
+            3 => gs.score.val += 5 * WELL_WIDTH,
+            4 => gs.score.val += 8 * WELL_WIDTH,
             _ => {}
         }
     }

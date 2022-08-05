@@ -98,6 +98,7 @@ pub struct Block {
 
 pub struct Score {
     pub level: usize,
+    pub lines: usize,
     pub val: usize,
     pub topout: bool,
 }
@@ -150,6 +151,7 @@ pub fn get_game_state() -> GameState {
         last_update: 0.0,
         score: Score {
             level: 0,
+            lines: 0,
             val: 0,
             topout: false,
         },
