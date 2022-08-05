@@ -18,7 +18,7 @@ pub const WELL_CELL_GAP: f32 = 0.01;
 pub const WELL_CELL: f32 = 1.0;
 
 // timers in seconds
-pub const AUTO_SHIFT_TIMEOUT: f64 = 0.075;
+pub const AUTO_SHIFT_TIMEOUT: f64 = 0.05;
 pub const AUTO_SHIFT_DELAY: f64 = 0.3;
 pub const LOCK_DELAY: f32 = 0.3;
 pub const HARD_DROP_GRAVITY: f32 = 1.0;
