@@ -56,7 +56,7 @@ fn commit_tetromino(gs: &mut GameState) {
         apply_gravity(&mut gs.placed_blocks, &completed_lines);
         gs.score.lines += completed_lines.len();
         if gs.score.lines % 10 == 0 {
-            gs.score.level += 1;
+            gs.score.level = usize::min(gs.score.level + 1, 30);
         }
         match completed_lines.len() {
             1 => gs.score.val += 1 * WELL_WIDTH,

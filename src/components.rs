@@ -129,7 +129,16 @@ pub struct GameState {
 }
 
 pub fn get_level_gravity_max(level: usize) -> f32 {
-    48.0 - (level as f32 * 5.0)
+    match level {
+        0..=8 => 48.0 - (level as f32 * 5.0),
+        9 => 6.0,
+        10..=12 => 5.0,
+        13..=15 => 4.0,
+        16..=18 => 3.0,
+        19..=28 => 2.0,
+        29..=30 => 1.0,
+        _ => 1.0,
+    }
 }
 
 pub fn get_game_state() -> GameState {
