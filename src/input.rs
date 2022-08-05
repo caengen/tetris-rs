@@ -77,7 +77,7 @@ pub fn input(gs: &mut GameState) {
             gs.key_info.auto_shift = (Some(KeyCode::Right), time);
         }
 
-        if time - gs.key_info.auto_shift_start < AUTO_SHIFT_DELAY {
+        if time - gs.key_info.auto_shift_start > AUTO_SHIFT_DELAY {
             let (key, last_move) = gs.key_info.auto_shift;
             match key {
                 Some(k) => {
