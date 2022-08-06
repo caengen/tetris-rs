@@ -1,5 +1,5 @@
 use collision::should_commit_tetromino;
-use macroquad::prelude::*;
+use macroquad::{prelude::*, window};
 mod components;
 use components::*;
 mod draw;
@@ -97,13 +97,22 @@ fn update(gs: &mut GameState) {
     }
 }
 
-#[macroquad::main("tetris.rs")]
-async fn main() {
-    request_new_screen_size(SCREEN_WIDTH, SCREEN_HEIGHT);
-    let mut gs = get_game_state();
+fn window_conf() -> window::Conf {
+    window::Conf {
+        window_title: "Tetris.rs".to_owned(),
+        window_width: SCREEN_WIDTH,
+        window_height: SCREEN_HEIGHT,
+        window_resizable: false,
+        high_dpi: true,
+        ..Default::default()
+    }
+}
 
+#[macroquad::main(window_conf)]
+async fn main() {
+    let mut gs = get_game_state();
     loop {
-        gs.scl = screen_height() / UNITS;
+        gs.scl = PIXELS_PER_UNIT as f32;
 
         if !gs.score.topout {
             input(&mut gs);
