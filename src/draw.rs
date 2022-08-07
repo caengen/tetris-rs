@@ -129,20 +129,29 @@ fn draw_hold(scl: f32, hold: &Option<Tetromino>) {
     }
 }
 
-fn draw_next(offset: Vec2, scl: f32, next: &Vec<Tetromino>) {
-    let scl_delta = 2.0;
-    let ui_x = WELL_WIDTH as f32 * (WELL_CELL - WELL_CELL_GAP) as f32 * scl + 20.0;
+fn draw_next(scl: f32, next: &Vec<Tetromino>) {
+    let font_size = 1.5 * scl;
+    let text = &"Next".to_string();
+    let text_measure = measure_text(text, None, font_size as _, 1.0);
+    let x = GAME_WIDTH as f32 - 5.0 - text_measure.width / scl;
+    draw_text("Next", x * scl, 2.0 * scl, font_size, WHITE);
 
-    draw_text("Next", ui_x, 230.0, 1. * scl, WHITE);
-    draw_rectangle_lines(ui_x - 10.0, 205.0, 80.0, 360.0, 4.0, WHITE);
     for (i, t) in next.iter().enumerate() {
-        let y_dis = WELL_HEIGHT as f32 - 20.0 - (4.0 * i as f32);
-        let pos = vec2((WELL_WIDTH as f32 + 1.0) * scl_delta, y_dis);
-        draw_tetromino(offset, scl / scl_delta, t, &pos, false, &false);
-        if i >= 5 {
+        let y_dis = GAME_HEIGHT as f32 - 13.0 - (3.0 * i as f32);
+        let pos = vec2(x, y_dis);
+
+        let offset = if t.width == 4 {
+            vec2(-0.5, 0.5)
+        } else {
+            vec2(0.0, -0.5)
+        };
+
+        draw_tetromino(offset, scl, t, &pos, false, &false);
+        if i >= 3 {
             break;
         }
     }
+    draw_border(scl, vec2(GAME_WIDTH as f32 - 8.0, 1.0), 4.0, 13.0);
 }
 
 fn draw_placed(offset: Vec2, scl: f32, placed: &Vec<Option<Block>>, debug: &bool) {
@@ -223,8 +232,8 @@ pub fn draw(gs: &GameState) {
     draw_placed(offset, gs.scl, &gs.placed_blocks, &gs.debug);
 
     draw_hold(gs.scl, &gs.hold);
+    draw_next(gs.scl, &gs.next);
 
-    // draw_next(gs.scl, &gs.next);
     // draw_score(gs.scl, &gs.score);
 
     if gs.debug {
