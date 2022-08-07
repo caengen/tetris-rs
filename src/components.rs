@@ -1,15 +1,21 @@
 use super::spawner;
 use macroquad::{
-    prelude::{vec2, Color, KeyCode, Mat3, Mat4, Vec2},
+    prelude::{color_u8, vec2, Color, KeyCode, Mat3, Mat4, Vec2},
     rand::srand,
 };
 use std::slice::Iter;
 
+//colors
+pub const DARK: Color = color_u8!(49, 47, 40, 255);
+pub const LIGHT: Color = color_u8!(218, 216, 209, 255);
+
 const TETROMINO_SEED: u64 = 792164921846;
 
-pub const SCREEN_WIDTH: f32 = 300.0;
-pub const SCREEN_HEIGHT: f32 = 1200.0;
-pub const UNITS: f32 = 22.0; // scale 1:22
+pub const SCREEN_WIDTH: i32 = 512;
+pub const SCREEN_HEIGHT: i32 = 480;
+pub const GAME_WIDTH: i32 = 32;
+pub const GAME_HEIGHT: i32 = 30;
+pub const PIXELS_PER_UNIT: i32 = 16;
 
 pub const WELL_WIDTH: usize = 10;
 pub const WELL_HEIGHT: usize = 22;
@@ -20,7 +26,7 @@ pub const WELL_CELL: f32 = 1.0;
 // timers in seconds
 pub const AUTO_SHIFT_TIMEOUT: f64 = 0.05;
 pub const AUTO_SHIFT_DELAY: f64 = 0.3;
-pub const LOCK_DELAY: f32 = 0.3;
+pub const LOCK_DELAY: f32 = 0.5;
 pub const HARD_DROP_GRAVITY: f32 = 1.0;
 pub const SOFT_DROP_GRAVITY: f32 = 20.0;
 

@@ -32,31 +32,31 @@ pub fn tetromino_color(t: &TetrominoType) -> (Color, Color) {
     match t {
         TetrominoType::J => (
             Color::from_rgba(0, 0, 255, 255),
-            Color::from_rgba(0, 0, 255, 50),
+            Color::from_rgba(0, 0, 255, 75),
         ),
         TetrominoType::L => (
             Color::from_rgba(255, 165, 0, 255),
-            Color::from_rgba(255, 165, 0, 50),
+            Color::from_rgba(255, 165, 0, 75),
         ),
         TetrominoType::S => (
             Color::from_rgba(0, 255, 0, 255),
-            Color::from_rgba(0, 255, 0, 50),
+            Color::from_rgba(0, 255, 0, 75),
         ),
         TetrominoType::T => (
             Color::from_rgba(128, 0, 128, 255),
-            Color::from_rgba(128, 0, 128, 50),
+            Color::from_rgba(128, 0, 128, 75),
         ),
         TetrominoType::Z => (
             Color::from_rgba(255, 0, 0, 255),
-            Color::from_rgba(255, 0, 0, 50),
+            Color::from_rgba(255, 0, 0, 75),
         ),
         TetrominoType::I => (
             Color::from_rgba(0, 255, 255, 255),
-            Color::from_rgba(0, 255, 255, 50),
+            Color::from_rgba(0, 255, 255, 75),
         ),
         TetrominoType::O => (
             Color::from_rgba(255, 255, 0, 255),
-            Color::from_rgba(255, 255, 0, 50),
+            Color::from_rgba(255, 255, 0, 75),
         ),
     }
 }
