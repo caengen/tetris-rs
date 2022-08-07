@@ -1,9 +1,12 @@
 use super::spawner;
 use macroquad::{
-    prelude::{vec2, Color, KeyCode, Mat3, Mat4, Vec2},
+    prelude::{color_u8, vec2, Color, KeyCode, Mat3, Mat4, Vec2},
     rand::srand,
 };
 use std::slice::Iter;
+
+//colors
+pub const DARK: Color = color_u8!(49, 47, 40, 1);
 
 const TETROMINO_SEED: u64 = 792164921846;
 
