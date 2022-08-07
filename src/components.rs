@@ -6,7 +6,8 @@ use macroquad::{
 use std::slice::Iter;
 
 //colors
-pub const DARK: Color = color_u8!(49, 47, 40, 1);
+pub const DARK: Color = color_u8!(49, 47, 40, 255);
+pub const LIGHT: Color = color_u8!(218, 216, 209, 255);
 
 const TETROMINO_SEED: u64 = 792164921846;
 
