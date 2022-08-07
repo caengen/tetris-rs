@@ -112,7 +112,7 @@ fn window_conf() -> window::Conf {
 async fn main() {
     let mut gs = get_game_state();
     loop {
-        gs.scl = PIXELS_PER_UNIT as f32;
+        gs.scl = screen_width() / GAME_WIDTH as f32;
 
         if !gs.score.topout {
             input(&mut gs);
