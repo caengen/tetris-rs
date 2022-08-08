@@ -24,7 +24,7 @@ pub fn draw_well(offset: Vec2, scl: f32) {
     }
 }
 
-pub fn draw_block(textures: &Texture2D, x: f32, y: f32, width: f32, kind: TetrominoType) {
+pub fn draw_block(scl: f32, textures: &Texture2D, x: f32, y: f32, kind: TetrominoType) {
     let srcs = vec![
         (TetrominoType::J, vec2(0.0, 0.0)),
         (TetrominoType::L, vec2(17.0, 0.0)),
@@ -49,6 +49,7 @@ pub fn draw_block(textures: &Texture2D, x: f32, y: f32, width: f32, kind: Tetrom
         y,
         LIGHT,
         DrawTextureParams {
+            dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
             source: Some(Rect::new(src.1.x, src.1.y, 16.0, 16.0)),
             ..Default::default()
         },
@@ -81,10 +82,10 @@ pub fn draw_tetromino(
                     let dy = WELL_HEIGHT as f32 - (y + c as f32);
                     if current.mat4.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
                         draw_block(
+                            scl,
                             textures,
                             (offset.x + dx as f32) * scl,
                             (offset.y + dy as f32) * scl,
-                            w,
                             current.kind,
                         );
                         // draw_rectangle(
@@ -115,10 +116,10 @@ pub fn draw_tetromino(
                     let dy = WELL_HEIGHT as f32 - (y + c as f32);
                     if current.mat.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
                         draw_block(
+                            scl,
                             textures,
                             (offset.x + dx as f32) * scl,
                             (offset.y + dy as f32) * scl,
-                            w,
                             current.kind,
                         );
                     } else {
@@ -212,10 +213,10 @@ fn draw_placed(
                 let y = idx as usize / WELL_WIDTH;
 
                 draw_block(
+                    scl,
                     textures,
                     (offset.x + x as f32) * scl,
                     (offset.y + y as f32) * scl,
-                    w,
                     block.kind,
                 );
             }
