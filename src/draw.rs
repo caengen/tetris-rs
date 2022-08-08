@@ -143,21 +143,22 @@ pub fn draw_tetromino(
 }
 
 fn draw_hold(textures: &Texture2D, scl: f32, hold: &Option<Tetromino>) {
+    let font_size = 1.5 * scl;
+    let text = &"Hold".to_string();
+    let text_measure = measure_text(text, None, font_size as _, 1.0);
+    let x = (5.0 - text_measure.width / scl) * scl;
+    draw_text("Hold", x, 2.0 * scl, font_size, LIGHT);
+    let pos = vec2(5.0 - text_measure.width / scl, WELL_HEIGHT as f32 - 5.0);
+    draw_border(textures, scl, vec2(2.0, 1.0), 4.0, 4.0);
+
     match hold {
         Some(hold) => {
-            let font_size = 1.5 * scl;
-            let text = &"Hold".to_string();
-            let text_measure = measure_text(text, None, font_size as _, 1.0);
-            let x = (5.0 - text_measure.width / scl) * scl;
-            draw_text("Hold", x, 2.0 * scl, font_size, LIGHT);
-            let pos = vec2((5.0 - text_measure.width / scl), WELL_HEIGHT as f32 - 5.0);
             let offset = if hold.width == 4 {
                 vec2(-0.5, 0.5)
             } else {
                 vec2(0.0, -0.5)
             };
             draw_tetromino(textures, offset, scl, hold, &pos, false, &false);
-            draw_border(textures, scl, vec2(2.0, 1.0), 4.0, 4.0);
         }
         _ => {}
     }
