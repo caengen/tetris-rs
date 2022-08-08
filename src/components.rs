@@ -1,6 +1,6 @@
 use super::spawner;
 use macroquad::{
-    prelude::{color_u8, vec2, Color, KeyCode, Mat3, Mat4, Vec2},
+    prelude::{color_u8, vec2, Color, KeyCode, Mat3, Mat4, Texture2D, Vec2},
     rand::srand,
 };
 use std::slice::Iter;
@@ -20,7 +20,7 @@ pub const PIXELS_PER_UNIT: i32 = 16;
 pub const WELL_WIDTH: usize = 10;
 pub const WELL_HEIGHT: usize = 22;
 
-pub const WELL_CELL_GAP: f32 = 0.01;
+pub const WELL_CELL_GAP: f32 = 1.0 / PIXELS_PER_UNIT as f32;
 pub const WELL_CELL: f32 = 1.0;
 
 // timers in seconds
@@ -100,6 +100,7 @@ pub struct Ghost {
 #[derive(Clone, Copy)]
 pub struct Block {
     pub color: Color,
+    pub kind: TetrominoType,
 }
 
 pub struct Score {
@@ -132,6 +133,7 @@ pub struct GameState {
     pub key_info: KeyInfo,
     pub gravity: Gravity,
     pub hold: Option<Tetromino>,
+    pub textures: Texture2D,
 }
 
 pub fn get_level_gravity_max(level: usize) -> f32 {
@@ -179,5 +181,6 @@ pub fn get_game_state() -> GameState {
             max: get_level_gravity_max(0),
         },
         hold: None,
+        textures: Texture2D::empty(),
     }
 }

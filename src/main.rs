@@ -44,7 +44,9 @@ fn commit_tetromino(gs: &mut GameState) {
 
     for p in points.iter() {
         gs.placed_blocks[xy_idx(p.x, p.y)] = Some(Block {
-            color: gs.current.color,
+            // color: gs.current.color,
+            color: LIGHT,
+            kind: gs.current.kind,
         });
     }
 
@@ -102,7 +104,7 @@ fn window_conf() -> window::Conf {
         window_title: "Tetris.rs".to_owned(),
         window_width: SCREEN_WIDTH,
         window_height: SCREEN_HEIGHT,
-        window_resizable: false,
+        window_resizable: true,
         high_dpi: true,
         ..Default::default()
     }
@@ -111,6 +113,10 @@ fn window_conf() -> window::Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
     let mut gs = get_game_state();
+
+    let blocks_texture: Texture2D = load_texture("src/blocks.png").await.unwrap();
+    gs.textures = blocks_texture;
+
     loop {
         gs.scl = screen_width() / GAME_WIDTH as f32;
 

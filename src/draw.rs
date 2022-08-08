@@ -1,10 +1,13 @@
+use crate::components::PIXELS_PER_UNIT;
+
 use super::{
     Block, GameState, Score, Tetromino, TetrominoType, DARK, GAME_HEIGHT, GAME_WIDTH, LIGHT,
     WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT, WELL_WIDTH,
 };
 use macroquad::prelude::{
     clear_background, draw_circle, draw_line, draw_rectangle, draw_rectangle_lines, draw_text,
-    measure_text, vec2, Vec2, BLUE, GRAY, PINK, RED,
+    draw_texture_ex, measure_text, vec2, DrawTextureParams, Rect, Texture2D, Vec2, BLUE, GRAY,
+    PINK, RED,
 };
 
 pub fn draw_well(offset: Vec2, scl: f32) {
@@ -21,7 +24,39 @@ pub fn draw_well(offset: Vec2, scl: f32) {
     }
 }
 
+pub fn draw_block(textures: &Texture2D, x: f32, y: f32, width: f32, kind: TetrominoType) {
+    let srcs = vec![
+        (TetrominoType::J, vec2(0.0, 0.0)),
+        (TetrominoType::L, vec2(17.0, 0.0)),
+        (TetrominoType::S, vec2(34.0, 0.0)),
+        (TetrominoType::T, vec2(51.0, 0.0)),
+        (TetrominoType::Z, vec2(68.0, 0.0)),
+        (TetrominoType::I, vec2(85.0, 0.0)),
+        (TetrominoType::O, vec2(102.0, 0.0)),
+    ];
+    let src = match kind {
+        TetrominoType::J => srcs[0],
+        TetrominoType::L => srcs[1],
+        TetrominoType::S => srcs[2],
+        TetrominoType::T => srcs[3],
+        TetrominoType::Z => srcs[4],
+        TetrominoType::I => srcs[5],
+        TetrominoType::O => srcs[6],
+    };
+    draw_texture_ex(
+        *textures,
+        x,
+        y,
+        LIGHT,
+        DrawTextureParams {
+            source: Some(Rect::new(src.1.x, src.1.y, 16.0, 16.0)),
+            ..Default::default()
+        },
+    )
+}
+
 pub fn draw_tetromino(
+    textures: &Texture2D,
     offset: Vec2,
     scl: f32,
     current: &Tetromino,
@@ -45,13 +80,20 @@ pub fn draw_tetromino(
                     let dx = x + r as f32;
                     let dy = WELL_HEIGHT as f32 - (y + c as f32);
                     if current.mat4.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
-                        draw_rectangle(
+                        draw_block(
+                            textures,
                             (offset.x + dx as f32) * scl,
                             (offset.y + dy as f32) * scl,
                             w,
-                            w,
-                            color,
+                            current.kind,
                         );
+                        // draw_rectangle(
+                        //     (offset.x + dx as f32) * scl,
+                        //     (offset.y + dy as f32) * scl,
+                        //     w,
+                        //     w,
+                        //     color,
+                        // );
                     } else {
                         if *debug {
                             draw_rectangle(
@@ -72,12 +114,12 @@ pub fn draw_tetromino(
                     let dx = x + r as f32;
                     let dy = WELL_HEIGHT as f32 - (y + c as f32);
                     if current.mat.row(r)[c] == 1.0 && dx >= 0.0 && dy >= 0.0 {
-                        draw_rectangle(
+                        draw_block(
+                            textures,
                             (offset.x + dx as f32) * scl,
                             (offset.y + dy as f32) * scl,
                             w,
-                            w,
-                            color,
+                            current.kind,
                         );
                     } else {
                         if *debug {
@@ -108,7 +150,7 @@ pub fn draw_tetromino(
     }
 }
 
-fn draw_hold(scl: f32, hold: &Option<Tetromino>) {
+fn draw_hold(textures: &Texture2D, scl: f32, hold: &Option<Tetromino>) {
     match hold {
         Some(hold) => {
             let font_size = 1.5 * scl;
@@ -122,14 +164,14 @@ fn draw_hold(scl: f32, hold: &Option<Tetromino>) {
             } else {
                 vec2(0.0, -0.5)
             };
-            draw_tetromino(offset, scl, hold, &pos, false, &false);
+            draw_tetromino(textures, offset, scl, hold, &pos, false, &false);
             draw_border(scl, vec2(2.0, 1.0), 4.0, 4.0);
         }
         _ => {}
     }
 }
 
-fn draw_next(scl: f32, next: &Vec<Tetromino>) {
+fn draw_next(textures: &Texture2D, scl: f32, next: &Vec<Tetromino>) {
     let font_size = 1.5 * scl;
     let text = &"Next".to_string();
     let text_measure = measure_text(text, None, font_size as _, 1.0);
@@ -146,7 +188,7 @@ fn draw_next(scl: f32, next: &Vec<Tetromino>) {
             vec2(0.0, -0.5)
         };
 
-        draw_tetromino(offset, scl, t, &pos, false, &false);
+        draw_tetromino(textures, offset, scl, t, &pos, false, &false);
         if i >= 3 {
             break;
         }
@@ -154,7 +196,13 @@ fn draw_next(scl: f32, next: &Vec<Tetromino>) {
     draw_border(scl, vec2(GAME_WIDTH as f32 - 8.0, 1.0), 4.0, 13.0);
 }
 
-fn draw_placed(offset: Vec2, scl: f32, placed: &Vec<Option<Block>>, debug: &bool) {
+fn draw_placed(
+    textures: &Texture2D,
+    offset: Vec2,
+    scl: f32,
+    placed: &Vec<Option<Block>>,
+    debug: &bool,
+) {
     let w = (WELL_CELL - WELL_CELL_GAP) * scl;
     for (idx, block) in placed.iter().enumerate() {
         match block {
@@ -163,12 +211,12 @@ fn draw_placed(offset: Vec2, scl: f32, placed: &Vec<Option<Block>>, debug: &bool
                 let x = idx as usize % WELL_WIDTH;
                 let y = idx as usize / WELL_WIDTH;
 
-                draw_rectangle(
+                draw_block(
+                    textures,
                     (offset.x + x as f32) * scl,
                     (offset.y + y as f32) * scl,
                     w,
-                    w,
-                    color,
+                    block.kind,
                 );
             }
             _ => {}
@@ -220,8 +268,17 @@ pub fn draw(gs: &GameState) {
     draw_well(offset, gs.scl);
     draw_border(gs.scl, offset, WELL_WIDTH as f32, WELL_HEIGHT as f32);
 
-    draw_tetromino(offset, gs.scl, &gs.current, &gs.ghost.pos, true, &gs.debug);
     draw_tetromino(
+        &gs.textures,
+        offset,
+        gs.scl,
+        &gs.current,
+        &gs.ghost.pos,
+        true,
+        &gs.debug,
+    );
+    draw_tetromino(
+        &gs.textures,
         offset,
         gs.scl,
         &gs.current,
@@ -229,10 +286,10 @@ pub fn draw(gs: &GameState) {
         false,
         &gs.debug,
     );
-    draw_placed(offset, gs.scl, &gs.placed_blocks, &gs.debug);
+    draw_placed(&gs.textures, offset, gs.scl, &gs.placed_blocks, &gs.debug);
 
-    draw_hold(gs.scl, &gs.hold);
-    draw_next(gs.scl, &gs.next);
+    draw_hold(&gs.textures, gs.scl, &gs.hold);
+    draw_next(&gs.textures, gs.scl, &gs.next);
 
     draw_score(gs.scl, &gs.score);
 
