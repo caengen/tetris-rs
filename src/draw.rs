@@ -234,7 +234,13 @@ fn draw_score(textures: &Texture2D, scl: f32, score: &Score) {
     draw_text(level_txt, x, y_2, font_size, LIGHT);
     draw_text(lines_txt, x, y_3, font_size, LIGHT);
     draw_text(score_txt, x, y_1, font_size, LIGHT);
-    draw_text(&format!("{}", score.val), x, y_1 + 25.0, font_size, LIGHT);
+    draw_text(
+        &format!("{}", score.val),
+        x,
+        y_1 + 1.5 * scl,
+        font_size,
+        LIGHT,
+    );
     let b_pos = vec2((GAME_WIDTH as f32 - 8.5), 17.0);
     draw_border(textures, scl, b_pos, 7.0, 8.0);
     // if score.topout {
