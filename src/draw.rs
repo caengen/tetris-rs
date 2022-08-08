@@ -222,19 +222,20 @@ fn draw_score(textures: &Texture2D, scl: f32, score: &Score) {
 
     let lines_txt = &format!("Lines {}", score.lines).to_string();
     let text_measure = measure_text(lines_txt, None, font_size as _, 1.0);
-    let x = (GAME_WIDTH as f32 - 3.0 - text_measure.width / scl) * scl;
+    let x = (GAME_WIDTH as f32 - 2.0 - text_measure.width / scl) * scl;
     let y_1 = (GAME_HEIGHT as f32 - 7.0) * scl;
     let y_2 = (GAME_HEIGHT as f32 - 9.0) * scl;
     let y_3 = (GAME_HEIGHT as f32 - 11.0) * scl;
 
     let level_txt = &format!("Level {}", score.level).to_string();
-    let score_txt = &format!("Score {}", score.val).to_string();
+    let score_txt = &"Score".to_string();
 
-    draw_text(level_txt, x, y_1, font_size, LIGHT);
-    draw_text(score_txt, x, y_2, font_size, LIGHT);
+    draw_text(level_txt, x, y_2, font_size, LIGHT);
     draw_text(lines_txt, x, y_3, font_size, LIGHT);
-    let b_pos = vec2((GAME_WIDTH as f32 - 9.5), 17.5);
-    draw_border(textures, scl, b_pos, 9.0, 6.0);
+    draw_text(score_txt, x, y_1, font_size, LIGHT);
+    draw_text(&format!("{}", score.val), x, y_1 + 25.0, font_size, LIGHT);
+    let b_pos = vec2((GAME_WIDTH as f32 - 8.5), 17.0);
+    draw_border(textures, scl, b_pos, 7.0, 8.0);
     // if score.topout {
     //     draw_text("Game Over", ui_x + 40.0, 90.0, 1.25 * scl, LIGHT);
     // }
