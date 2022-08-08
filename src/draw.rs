@@ -157,7 +157,7 @@ fn draw_hold(textures: &Texture2D, scl: f32, hold: &Option<Tetromino>) {
                 vec2(0.0, -0.5)
             };
             draw_tetromino(textures, offset, scl, hold, &pos, false, &false);
-            draw_border(scl, vec2(2.0, 1.0), 4.0, 4.0);
+            draw_border(textures, scl, vec2(2.0, 1.0), 4.0, 4.0);
         }
         _ => {}
     }
@@ -185,7 +185,7 @@ fn draw_next(textures: &Texture2D, scl: f32, next: &Vec<Tetromino>) {
             break;
         }
     }
-    draw_border(scl, vec2(GAME_WIDTH as f32 - 8.0, 1.0), 4.0, 13.0);
+    draw_border(textures, scl, vec2(GAME_WIDTH as f32 - 8.0, 1.0), 4.0, 13.0);
 }
 
 fn draw_placed(
@@ -217,7 +217,7 @@ fn draw_placed(
     }
 }
 
-fn draw_score(scl: f32, score: &Score) {
+fn draw_score(textures: &Texture2D, scl: f32, score: &Score) {
     let font_size = 2.0 * scl;
 
     let lines_txt = &format!("Lines {}", score.lines).to_string();
@@ -234,13 +234,26 @@ fn draw_score(scl: f32, score: &Score) {
     draw_text(score_txt, x, y_2, font_size, LIGHT);
     draw_text(lines_txt, x, y_3, font_size, LIGHT);
     let b_pos = vec2((GAME_WIDTH as f32 - 9.5), 17.5);
-    draw_border(scl, b_pos, 9.0, 6.0);
+    draw_border(textures, scl, b_pos, 9.0, 6.0);
     // if score.topout {
     //     draw_text("Game Over", ui_x + 40.0, 90.0, 1.25 * scl, LIGHT);
     // }
 }
 
-fn draw_border(scl: f32, pos: Vec2, w: f32, h: f32) {
+fn draw_border(textures: &Texture2D, scl: f32, pos: Vec2, w: f32, h: f32) {
+    // draw_texture_ex(
+    //     *textures,
+    //     x,
+    //     y,
+    //     LIGHT,
+    //     DrawTextureParams {
+    //         dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
+    //         source: Some(Rect::new(atlas_x, 0.0, 16.0, 16.0)),
+    //         ..Default::default()
+    //     },
+    // );
+    //draw edges
+
     draw_rectangle_lines(
         (pos.x - 0.5) * scl,
         (pos.y - 0.5) * scl,
@@ -248,6 +261,105 @@ fn draw_border(scl: f32, pos: Vec2, w: f32, h: f32) {
         (h + 1.0) * scl,
         1.0 * scl,
         LIGHT,
+    );
+    draw_texture_ex(
+        *textures,
+        (pos.x - 1.0) * scl,
+        (pos.y - 1.0) * scl,
+        LIGHT,
+        DrawTextureParams {
+            dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
+            source: Some(Rect::new(0.0, 16.0, 16.0, 16.0)),
+            ..Default::default()
+        },
+    );
+    for i in 0..(w as i32) {
+        draw_texture_ex(
+            *textures,
+            (pos.x + i as f32) * scl,
+            (pos.y - 1.0) * scl,
+            LIGHT,
+            DrawTextureParams {
+                dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
+                source: Some(Rect::new(16.0, 16.0, 16.0, 16.0)),
+                ..Default::default()
+            },
+        );
+        draw_texture_ex(
+            *textures,
+            (pos.x + i as f32) * scl,
+            (pos.y + h) * scl,
+            LIGHT,
+            DrawTextureParams {
+                dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
+                source: Some(Rect::new(16.0, 16.0, 16.0, 16.0)),
+                rotation: 180.0_f32.to_radians(),
+                ..Default::default()
+            },
+        );
+    }
+    draw_texture_ex(
+        *textures,
+        (pos.x + w) * scl,
+        (pos.y - 1.0) * scl,
+        LIGHT,
+        DrawTextureParams {
+            dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
+            source: Some(Rect::new(0.0, 16.0, 16.0, 16.0)),
+            rotation: 90.0_f32.to_radians(),
+            ..Default::default()
+        },
+    );
+    for i in 0..(h as i32) {
+        draw_texture_ex(
+            *textures,
+            (pos.x + w) * scl,
+            (pos.y + i as f32) * scl,
+            LIGHT,
+            DrawTextureParams {
+                dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
+                source: Some(Rect::new(16.0, 16.0, 16.0, 16.0)),
+                rotation: 90.0_f32.to_radians(),
+                ..Default::default()
+            },
+        );
+        draw_texture_ex(
+            *textures,
+            (pos.x - 1.0) * scl,
+            (pos.y + i as f32) * scl,
+            LIGHT,
+            DrawTextureParams {
+                dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
+                source: Some(Rect::new(16.0, 16.0, 16.0, 16.0)),
+                rotation: -90.0_f32.to_radians(),
+                ..Default::default()
+            },
+        );
+    }
+    draw_texture_ex(
+        *textures,
+        (pos.x - 1.0) * scl,
+        (pos.y + h) * scl,
+        LIGHT,
+        DrawTextureParams {
+            dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
+            source: Some(Rect::new(0.0, 16.0, 16.0, 16.0)),
+            rotation: -90.0_f32.to_radians(),
+
+            ..Default::default()
+        },
+    );
+    draw_texture_ex(
+        *textures,
+        (pos.x + w) * scl,
+        (pos.y + h) * scl,
+        LIGHT,
+        DrawTextureParams {
+            dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
+            source: Some(Rect::new(0.0, 16.0, 16.0, 16.0)),
+            rotation: 180.0_f32.to_radians(),
+            ..Default::default()
+        },
     );
 }
 
@@ -259,7 +371,13 @@ pub fn draw(gs: &GameState) {
         GAME_HEIGHT as f32 / 2.0 - WELL_HEIGHT as f32 / 2.0,
     );
     draw_well(offset, gs.scl);
-    draw_border(gs.scl, offset, WELL_WIDTH as f32, WELL_HEIGHT as f32);
+    draw_border(
+        &gs.textures,
+        gs.scl,
+        offset,
+        WELL_WIDTH as f32,
+        WELL_HEIGHT as f32,
+    );
 
     draw_tetromino(
         &gs.textures,
@@ -284,7 +402,7 @@ pub fn draw(gs: &GameState) {
     draw_hold(&gs.textures, gs.scl, &gs.hold);
     draw_next(&gs.textures, gs.scl, &gs.next);
 
-    draw_score(gs.scl, &gs.score);
+    draw_score(&gs.textures, gs.scl, &gs.score);
 
     if gs.debug {
         draw_text(
