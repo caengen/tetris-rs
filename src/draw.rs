@@ -24,25 +24,26 @@ pub fn draw_well(offset: Vec2, scl: f32) {
     }
 }
 
-pub fn draw_block(scl: f32, textures: &Texture2D, x: f32, y: f32, kind: TetrominoType) {
-    let srcs = vec![
-        (TetrominoType::J, vec2(0.0, 0.0)),
-        (TetrominoType::L, vec2(17.0, 0.0)),
-        (TetrominoType::S, vec2(34.0, 0.0)),
-        (TetrominoType::T, vec2(51.0, 0.0)),
-        (TetrominoType::Z, vec2(68.0, 0.0)),
-        (TetrominoType::I, vec2(85.0, 0.0)),
-        (TetrominoType::O, vec2(102.0, 0.0)),
-    ];
-    let src = match kind {
-        TetrominoType::J => srcs[0],
-        TetrominoType::L => srcs[1],
-        TetrominoType::S => srcs[2],
-        TetrominoType::T => srcs[3],
-        TetrominoType::Z => srcs[4],
-        TetrominoType::I => srcs[5],
-        TetrominoType::O => srcs[6],
+pub fn draw_block(
+    scl: f32,
+    textures: &Texture2D,
+    x: f32,
+    y: f32,
+    kind: TetrominoType,
+    is_ghost: bool,
+) {
+    let mut atlas_x = match kind {
+        TetrominoType::J => 0.0,
+        TetrominoType::L => 16.0,
+        TetrominoType::S => 32.0,
+        TetrominoType::T => 48.0,
+        TetrominoType::Z => 64.0,
+        TetrominoType::I => 80.0,
+        TetrominoType::O => 96.0,
     };
+    if is_ghost {
+        atlas_x = 112.0;
+    }
     draw_texture_ex(
         *textures,
         x,
@@ -50,10 +51,10 @@ pub fn draw_block(scl: f32, textures: &Texture2D, x: f32, y: f32, kind: Tetromin
         LIGHT,
         DrawTextureParams {
             dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
-            source: Some(Rect::new(src.1.x, src.1.y, 16.0, 16.0)),
+            source: Some(Rect::new(atlas_x, 0.0, 16.0, 16.0)),
             ..Default::default()
         },
-    )
+    );
 }
 
 pub fn draw_tetromino(
@@ -68,11 +69,6 @@ pub fn draw_tetromino(
     let x = pos.x;
     let y = pos.y;
     let w = (WELL_CELL - WELL_CELL_GAP) * scl;
-    let color = if ghost {
-        current.ghost_color
-    } else {
-        current.color
-    };
 
     match current.kind {
         TetrominoType::I | TetrominoType::O => {
@@ -87,14 +83,8 @@ pub fn draw_tetromino(
                             (offset.x + dx as f32) * scl,
                             (offset.y + dy as f32) * scl,
                             current.kind,
+                            ghost,
                         );
-                        // draw_rectangle(
-                        //     (offset.x + dx as f32) * scl,
-                        //     (offset.y + dy as f32) * scl,
-                        //     w,
-                        //     w,
-                        //     color,
-                        // );
                     } else {
                         if *debug {
                             draw_rectangle(
@@ -121,6 +111,7 @@ pub fn draw_tetromino(
                             (offset.x + dx as f32) * scl,
                             (offset.y + dy as f32) * scl,
                             current.kind,
+                            ghost,
                         );
                     } else {
                         if *debug {
@@ -218,6 +209,7 @@ fn draw_placed(
                     (offset.x + x as f32) * scl,
                     (offset.y + y as f32) * scl,
                     block.kind,
+                    false,
                 );
             }
             _ => {}
