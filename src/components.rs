@@ -1,8 +1,5 @@
 use super::spawner;
-use macroquad::{
-    prelude::{color_u8, vec2, Color, KeyCode, Mat3, Mat4, Texture2D, Vec2},
-    rand::srand,
-};
+use macroquad::prelude::{color_u8, vec2, Color, KeyCode, Mat3, Mat4, Texture2D, Vec2};
 use std::collections::HashMap;
 
 //colors
@@ -28,8 +25,9 @@ pub const AUTO_SHIFT_TIMEOUT: f64 = 0.05;
 pub const AUTO_SHIFT_DELAY: f64 = 0.3;
 pub const LOCK_DELAY: f32 = 0.5;
 pub const HARD_DROP_GRAVITY: f32 = 1.0;
-pub const SOFT_DROP_GRAVITY: f32 = 20.0;
+pub const SOFT_DROP_GRAVITY: f32 = 5.0;
 pub const ENTRY_DELAY: f32 = 20.0;
+pub const SCORE_TIMEOUT: f32 = 60.0;
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub enum TetrominoType {
@@ -154,7 +152,6 @@ pub fn get_level_gravity_max(level: usize) -> f32 {
 
 pub fn get_game_state() -> GameState {
     let tetrominos = spawner::tetromino_set();
-    srand(TETROMINO_SEED);
     let next = spawner::random_tetrominos(&tetrominos, 10);
     let current = spawner::spawn_tetromino(&tetrominos);
     GameState {

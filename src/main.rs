@@ -125,6 +125,8 @@ fn window_conf() -> window::Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
+    rand::srand(macroquad::miniquad::date::now() as u64);
+
     let mut gs = get_game_state();
 
     let blocks_texture: Texture2D = load_texture("src/blocks.png").await.unwrap();
