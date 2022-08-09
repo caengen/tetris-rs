@@ -35,6 +35,22 @@ fn update_ghost(gs: &mut GameState) {
     gs.ghost.pos = pos;
 }
 
+fn calculate_score(gs: &mut GameState, completed_lines: &Vec<usize>) {
+    let n = completed_lines.len();
+    gs.score.lines += n;
+    if gs.score.lines % 10 == 0 {
+        gs.score.level = usize::min(gs.score.level + 1, 30);
+    }
+    let score = match n {
+        1 => 40 * (n + 1),
+        2 => 100 * (n + 1),
+        3 => 300 * (n + 1),
+        4 => 1200 * (n + 1),
+        _ => 0,
+    };
+    gs.score.val += score;
+}
+
 fn commit_tetromino(gs: &mut GameState) {
     if gs.current.pos.cmpeq(gs.current.spawn_pos).all() {
         gs.score.topout = true;
@@ -56,22 +72,11 @@ fn commit_tetromino(gs: &mut GameState) {
     }
 
     gs.current = drain_next(gs);
-
     let completed_lines = collision::completed_lines(&gs.placed_blocks);
     if completed_lines.len() > 0 {
         spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
         apply_gravity(&mut gs.placed_blocks, &completed_lines);
-        gs.score.lines += completed_lines.len();
-        if gs.score.lines % 10 == 0 {
-            gs.score.level = usize::min(gs.score.level + 1, 30);
-        }
-        match completed_lines.len() {
-            1 => gs.score.val += 1 * WELL_WIDTH,
-            2 => gs.score.val += 3 * WELL_WIDTH,
-            3 => gs.score.val += 5 * WELL_WIDTH,
-            4 => gs.score.val += 8 * WELL_WIDTH,
-            _ => {}
-        }
+        calculate_score(gs, &completed_lines);
     }
 }
 
