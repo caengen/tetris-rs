@@ -31,16 +31,13 @@ fn update_ghost(gs: &mut GameState) {
         pos.y -= 1.0;
     }
 
-    debug!("updating ghost {}", pos);
     gs.ghost.pos = pos;
 }
 
 fn calculate_score(gs: &mut GameState, completed_lines: &Vec<usize>) {
     let n = completed_lines.len();
     gs.score.lines += n;
-    if gs.score.lines % 10 == 0 {
-        gs.score.level = usize::min(gs.score.level + 1, 30);
-    }
+    gs.score.level = gs.score.lines / 10;
     let score = match n {
         1 => 40 * (n + 1),
         2 => 100 * (n + 1),
