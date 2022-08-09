@@ -40,14 +40,19 @@ fn commit_tetromino(gs: &mut GameState) {
         gs.score.topout = true;
         return;
     }
-    let points = gs.current.relative_points(&gs.current.pos);
 
+    let points = gs.current.relative_points(&gs.current.pos);
     for p in points.iter() {
         gs.placed_blocks[xy_idx(p.x, p.y)] = Some(Block {
             // color: gs.current.color,
             color: LIGHT,
             kind: gs.current.kind,
         });
+    }
+    let stat = gs.statistics.get_mut(&gs.current.kind);
+    match stat {
+        Some(stat_val) => *stat_val += 1,
+        _ => {}
     }
 
     gs.current = drain_next(gs);

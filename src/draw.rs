@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::components::{ENTRY_DELAY, PIXELS_PER_UNIT};
 
 use super::{
@@ -156,11 +158,14 @@ fn draw_visual_only_tetromino(
 
 fn draw_hold(textures: &Texture2D, scl: f32, hold: &Option<Tetromino>) {
     let font_size = 1.5 * scl;
-    let text = &"Hold".to_string();
+    let text = &"HOLD".to_string();
     let text_measure = measure_text(text, None, font_size as _, 1.0);
     let x = (5.0 - text_measure.width / scl) * scl;
-    draw_text("Hold", x, 2.0 * scl, font_size, LIGHT);
-    let pos = vec2(5.0 - text_measure.width / scl, WELL_HEIGHT as f32 - 5.0);
+    draw_text(text, x, 2.0 * scl, font_size, LIGHT);
+    let pos = vec2(
+        (5.0 - text_measure.width / 2.0 / scl) * scl,
+        WELL_HEIGHT as f32 - 5.0,
+    );
     draw_border(textures, scl, vec2(2.0, 1.0), 4.0, 4.0);
 
     match hold {
@@ -173,6 +178,40 @@ fn draw_hold(textures: &Texture2D, scl: f32, hold: &Option<Tetromino>) {
             draw_tetromino(textures, offset, scl, hold, &pos, false, &false);
         }
         _ => {}
+    }
+}
+
+fn draw_statistics(
+    textures: &Texture2D,
+    scl: f32,
+    tetrominos: &Vec<Tetromino>,
+    statistics: &HashMap<TetrominoType, usize>,
+) {
+    let font_size = 1.5 * scl;
+    let text = &"STATISTICS".to_string();
+    let text_measure = measure_text(text, None, font_size as _, 1.0);
+    let x = (5.0 - text_measure.width / 2.0 / scl);
+    let y = 10.0;
+    draw_text(text, x * scl, y * scl, font_size, LIGHT);
+    draw_border(textures, scl, vec2(x, y - 1.0), 7.0, 17.0);
+    for (i, t) in tetrominos.iter().enumerate() {
+        let stat = statistics.get(&t.kind);
+        let ty = y as i32 - 3 - (3 * i as i32);
+        draw_visual_only_tetromino(scl / 1.25, textures, &vec2(2.5, ty as f32), t);
+        match stat {
+            Some(stat) => {
+                let stat_text = &format!("{:0>3}", stat).to_string();
+                let stat_measure = measure_text(&stat_text, None, font_size as _, 1.0);
+                draw_text(
+                    stat_text,
+                    (x + 6.125) * scl - stat_measure.width,
+                    (y as f32 + 1.875 + (2.25 * i as f32)) as f32 * scl,
+                    2.0 * scl,
+                    LIGHT,
+                );
+            }
+            _ => {}
+        }
     }
 }
 
@@ -389,8 +428,9 @@ pub fn draw(gs: &GameState) {
 
     draw_hold(&gs.textures, gs.scl, &gs.hold);
     draw_next(&gs.textures, gs.scl, &gs.next);
-
     draw_score(&gs.textures, gs.scl, &gs.score);
+    draw_statistics(&gs.textures, gs.scl, &gs.tetrominos, &gs.statistics);
+
     let entered = gs.current.entry_timer >= ENTRY_DELAY;
     if entered {
         draw_tetromino(

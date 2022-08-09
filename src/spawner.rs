@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use macroquad::{
     prelude::{
         const_mat3, const_mat4, debug, vec2, Color, Mat3, Mat4, Vec2, BLUE, GREEN, ORANGE, PURPLE,
@@ -199,4 +201,18 @@ pub fn reset_transform(tetromino: &mut Tetromino) {
             }
         }
     }
+}
+
+pub fn statistics() -> HashMap<TetrominoType, usize> {
+    let mut hmap = HashMap::new();
+
+    hmap.insert(TetrominoType::J, 0);
+    hmap.insert(TetrominoType::L, 0);
+    hmap.insert(TetrominoType::S, 0);
+    hmap.insert(TetrominoType::T, 0);
+    hmap.insert(TetrominoType::Z, 0);
+    hmap.insert(TetrominoType::I, 0);
+    hmap.insert(TetrominoType::O, 0);
+
+    hmap
 }
