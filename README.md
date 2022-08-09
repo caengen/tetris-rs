@@ -8,6 +8,8 @@ Run `cargo run`.
 
 _(Press `G` in-game for debug mode.)_
 
+![Demo](https://github.com/caengen/tetris-rs/blob/master/demo/demo.gif)
+
 ### Keybindings
 
 | Key   | Action           |
