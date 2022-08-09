@@ -20,4 +20,5 @@ _(Press `G` in-game for debug mode.)_
 | Down  | Soft drop        |
 | Space | Hard drop        |
 | C     | Hold tetromino   |
+| R     | Reset game       |
 | G     | Debugger         |
