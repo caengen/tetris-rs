@@ -162,20 +162,19 @@ fn draw_hold(textures: &Texture2D, scl: f32, hold: &Option<Tetromino>) {
     let text_measure = measure_text(text, None, font_size as _, 1.0);
     let x = (5.0 - text_measure.width / scl) * scl;
     draw_text(text, x, 2.0 * scl, font_size, LIGHT);
-    let pos = vec2(
-        (5.0 - text_measure.width / 2.0 / scl) * scl,
-        WELL_HEIGHT as f32 - 5.0,
-    );
     draw_border(textures, scl, vec2(2.0, 1.0), 4.0, 4.0);
 
     match hold {
         Some(hold) => {
-            let offset = if hold.width == 4 {
-                vec2(-0.5, 0.5)
-            } else {
-                vec2(0.0, -0.5)
-            };
-            draw_tetromino(textures, offset, scl, hold, &pos, false, &false);
+            draw_visual_only_tetromino(
+                scl,
+                textures,
+                &vec2(
+                    4.0 - hold.width as f32 / 2.0,
+                    19.0 - f32::floor(hold.width as f32 / 2.0) - 0.5,
+                ),
+                hold,
+            );
         }
         _ => {}
     }
@@ -217,10 +216,10 @@ fn draw_statistics(
 
 fn draw_next(textures: &Texture2D, scl: f32, next: &Vec<Tetromino>) {
     let font_size = 1.5 * scl;
-    let text = &"Next".to_string();
+    let text = &"NEXT".to_string();
     let text_measure = measure_text(text, None, font_size as _, 1.0);
     let x = GAME_WIDTH as f32 - 5.0 - text_measure.width / scl;
-    draw_text("Next", x * scl, 2.0 * scl, font_size, LIGHT);
+    draw_text(text, x * scl, 2.0 * scl, font_size, LIGHT);
 
     for (i, t) in next.iter().enumerate() {
         let y_dis = GAME_HEIGHT as f32 - 13.0 - (3.0 * i as f32);
@@ -270,23 +269,23 @@ fn draw_placed(
 }
 
 fn draw_score(textures: &Texture2D, scl: f32, score: &Score) {
-    let font_size = 2.0 * scl;
+    let font_size = 1.5 * scl;
 
-    let lines_txt = &format!("Lines {}", score.lines).to_string();
+    let lines_txt = &format!("LINES {:0>3}", score.lines).to_string();
     let text_measure = measure_text(lines_txt, None, font_size as _, 1.0);
     let x = (GAME_WIDTH as f32 - 2.0 - text_measure.width / scl) * scl;
     let y_1 = (GAME_HEIGHT as f32 - 7.0) * scl;
     let y_2 = (GAME_HEIGHT as f32 - 9.0) * scl;
     let y_3 = (GAME_HEIGHT as f32 - 11.0) * scl;
 
-    let level_txt = &format!("Level {}", score.level).to_string();
-    let score_txt = &"Score".to_string();
+    let level_txt = &format!("LEVEL {:0>2}", score.level).to_string();
+    let score_txt = &"SCORE".to_string();
 
     draw_text(level_txt, x, y_2, font_size, LIGHT);
     draw_text(lines_txt, x, y_3, font_size, LIGHT);
     draw_text(score_txt, x, y_1, font_size, LIGHT);
     draw_text(
-        &format!("{}", score.val),
+        &format!("{:0>6}", score.val),
         x,
         y_1 + 1.5 * scl,
         font_size,
