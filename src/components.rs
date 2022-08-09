@@ -23,12 +23,13 @@ pub const WELL_HEIGHT: usize = 22;
 pub const WELL_CELL_GAP: f32 = 1.0 / PIXELS_PER_UNIT as f32;
 pub const WELL_CELL: f32 = 1.0;
 
-// timers in seconds
+// timers in frames
 pub const AUTO_SHIFT_TIMEOUT: f64 = 0.05;
 pub const AUTO_SHIFT_DELAY: f64 = 0.3;
 pub const LOCK_DELAY: f32 = 0.5;
 pub const HARD_DROP_GRAVITY: f32 = 1.0;
 pub const SOFT_DROP_GRAVITY: f32 = 20.0;
+pub const ENTRY_DELAY: f32 = 20.0;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum TetrominoType {
@@ -53,6 +54,7 @@ pub struct Tetromino {
     pub color: Color,
     pub ghost_color: Color,
     pub lock_timer: f32,
+    pub entry_timer: f32,
     pub locking: bool,
     pub sonic_lock: bool,
     pub held: bool,

@@ -1,4 +1,4 @@
-use crate::components::PIXELS_PER_UNIT;
+use crate::components::{ENTRY_DELAY, PIXELS_PER_UNIT};
 
 use super::{
     Block, GameState, Score, Tetromino, TetrominoType, DARK, GAME_HEIGHT, GAME_WIDTH, LIGHT,
@@ -142,6 +142,18 @@ pub fn draw_tetromino(
     }
 }
 
+fn draw_visual_only_tetromino(
+    scl: f32,
+    textures: &Texture2D,
+    game_pos: &Vec2,
+    tetromino: &Tetromino,
+) {
+    let points = tetromino.relative_points(game_pos);
+    for p in points.iter() {
+        draw_block(scl, textures, p.x * scl, p.y * scl, tetromino.kind, false);
+    }
+}
+
 fn draw_hold(textures: &Texture2D, scl: f32, hold: &Option<Tetromino>) {
     let font_size = 1.5 * scl;
     let text = &"Hold".to_string();
@@ -249,19 +261,6 @@ fn draw_score(textures: &Texture2D, scl: f32, score: &Score) {
 }
 
 fn draw_border(textures: &Texture2D, scl: f32, pos: Vec2, w: f32, h: f32) {
-    // draw_texture_ex(
-    //     *textures,
-    //     x,
-    //     y,
-    //     LIGHT,
-    //     DrawTextureParams {
-    //         dest_size: Some(vec2(1.0 * scl, 1.0 * scl)),
-    //         source: Some(Rect::new(atlas_x, 0.0, 16.0, 16.0)),
-    //         ..Default::default()
-    //     },
-    // );
-    //draw edges
-
     draw_rectangle_lines(
         (pos.x - 0.5) * scl,
         (pos.y - 0.5) * scl,
@@ -386,31 +385,43 @@ pub fn draw(gs: &GameState) {
         WELL_WIDTH as f32,
         WELL_HEIGHT as f32,
     );
-
-    draw_tetromino(
-        &gs.textures,
-        offset,
-        gs.scl,
-        &gs.current,
-        &gs.ghost.pos,
-        true,
-        &gs.debug,
-    );
-    draw_tetromino(
-        &gs.textures,
-        offset,
-        gs.scl,
-        &gs.current,
-        &gs.current.pos,
-        false,
-        &gs.debug,
-    );
     draw_placed(&gs.textures, offset, gs.scl, &gs.placed_blocks, &gs.debug);
 
     draw_hold(&gs.textures, gs.scl, &gs.hold);
     draw_next(&gs.textures, gs.scl, &gs.next);
 
     draw_score(&gs.textures, gs.scl, &gs.score);
+    let entered = gs.current.entry_timer >= ENTRY_DELAY;
+    if entered {
+        draw_tetromino(
+            &gs.textures,
+            offset,
+            gs.scl,
+            &gs.current,
+            &gs.ghost.pos,
+            true,
+            &gs.debug,
+        );
+        draw_tetromino(
+            &gs.textures,
+            offset,
+            gs.scl,
+            &gs.current,
+            &gs.current.pos,
+            false,
+            &gs.debug,
+        );
+    } else {
+        draw_visual_only_tetromino(
+            gs.scl,
+            &gs.textures,
+            &vec2(
+                f32::floor(GAME_WIDTH as f32 / 2.0 - f32::floor(gs.current.width as f32 / 2.0)),
+                19.0,
+            ),
+            &gs.current,
+        );
+    }
 
     if gs.debug {
         draw_text(

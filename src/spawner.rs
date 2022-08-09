@@ -83,7 +83,7 @@ pub fn tetromino_set() -> Vec<Tetromino> {
         let width = 3;
         let pos = vec2(
             f32::floor(5.0 - width as f32 / 2.0),
-            f32::floor(WELL_HEIGHT as f32 - width as f32 / 2.0) + 1.0,
+            f32::floor(WELL_HEIGHT as f32) - 2.0,
         );
         let (color, ghost_color) = tetromino_color(t);
         tetrominos.push(Tetromino {
@@ -97,6 +97,7 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             color,
             ghost_color,
             lock_timer: 0.0,
+            entry_timer: 0.0,
             locking: false,
             sonic_lock: false,
             held: false,
@@ -106,7 +107,7 @@ pub fn tetromino_set() -> Vec<Tetromino> {
         let width = 4;
         let pos = vec2(
             f32::floor(5.0 - width as f32 / 2.0),
-            f32::floor(WELL_HEIGHT as f32 - width as f32 / 2.0) + 1.0,
+            f32::floor(WELL_HEIGHT as f32) - 2.0,
         );
         let (color, ghost_color) = tetromino_color(t);
         tetrominos.push(Tetromino {
@@ -120,6 +121,7 @@ pub fn tetromino_set() -> Vec<Tetromino> {
             color,
             ghost_color,
             lock_timer: 0.0,
+            entry_timer: 0.0,
             locking: false,
             sonic_lock: false,
             held: false,

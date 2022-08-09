@@ -73,6 +73,9 @@ fn commit_tetromino(gs: &mut GameState) {
 fn update(gs: &mut GameState) {
     let delta = get_frame_time();
     gs.gravity.meter += 1.0;
+    if gs.current.entry_timer < ENTRY_DELAY {
+        gs.current.entry_timer += 1.0;
+    }
 
     if gs.ghost.dirty {
         update_ghost(gs);
@@ -94,7 +97,7 @@ fn update(gs: &mut GameState) {
         commit_tetromino(gs);
     }
 
-    if !on_surface && gs.gravity.meter >= gs.gravity.max {
+    if !on_surface && gs.gravity.meter >= gs.gravity.max && gs.current.entry_timer >= ENTRY_DELAY {
         move_downwards(gs);
     }
 }
