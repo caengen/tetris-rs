@@ -114,8 +114,10 @@ pub fn input(gs: &mut GameState) {
     }
     if is_key_pressed(KeyCode::R) {
         let textures = gs.textures;
+        let font = gs.font;
         *gs = get_game_state();
         gs.textures = textures;
+        gs.font = font;
     }
     if is_key_pressed(KeyCode::C) {
         if gs.current.held {

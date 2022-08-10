@@ -8,9 +8,9 @@ use super::{
 };
 use macroquad::{
     prelude::{
-        clear_background, draw_circle, draw_line, draw_rectangle, draw_rectangle_lines, draw_text,
-        draw_texture_ex, measure_text, vec2, DrawTextureParams, Rect, Texture2D, Vec2, BLUE, GRAY,
-        PINK, RED,
+        clear_background, debug, draw_circle, draw_line, draw_rectangle, draw_rectangle_lines,
+        draw_text, draw_texture_ex, get_fps, measure_text, vec2, DrawTextureParams, Rect,
+        Texture2D, Vec2, BLUE, GRAY, PINK, RED,
     },
     text::{draw_text_ex, Font, TextParams},
 };
@@ -470,25 +470,33 @@ fn draw_border(textures: &Texture2D, scl: f32, pos: Vec2, w: f32, h: f32) {
     );
 }
 
-fn draw_score_popup(scl: f32, well_pos: &Vec2, score: &ScorePopup) {
+fn draw_score_popup(font: &Font, scl: f32, well_pos: &Vec2, score: &ScorePopup) {
     let font_size = 2.0 * scl;
 
     let score_text = &format!("{}", score.val).to_string();
-    let text_measure = measure_text(score_text, None, font_size as _, 1.0);
+    let text_measure = measure_text(score_text, Some(*font), font_size as _, 1.0);
 
-    draw_text(
+    draw_text_ex(
         &score_text,
         (well_pos.x + (WELL_WIDTH / 2) as f32) * scl - text_measure.width / 2.0 + 0.1 * scl,
         (well_pos.y + (WELL_HEIGHT / 3) as f32) * scl,
-        font_size,
-        DARK,
+        TextParams {
+            font_size: font_size as u16,
+            font: *font,
+            color: DARK,
+            ..Default::default()
+        },
     );
-    draw_text(
+    draw_text_ex(
         &score_text,
         (well_pos.x + (WELL_WIDTH / 2) as f32) * scl - text_measure.width / 2.0,
         (well_pos.y + (WELL_HEIGHT / 3) as f32) * scl,
-        font_size,
-        LIGHT,
+        TextParams {
+            font_size: font_size as u16,
+            font: *font,
+            color: LIGHT,
+            ..Default::default()
+        },
     );
 }
 
@@ -554,7 +562,7 @@ pub fn draw(gs: &GameState) {
 
     draw_score(&gs.textures, &gs.font, gs.scl, &gs.score);
     if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
-        draw_score_popup(gs.scl, &offset, &gs.last_score);
+        draw_score_popup(&gs.font, gs.scl, &offset, &gs.last_score);
     }
 
     if gs.debug {
