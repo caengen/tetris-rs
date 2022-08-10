@@ -1,17 +1,18 @@
 use super::spawner;
-use macroquad::prelude::{color_u8, vec2, Color, KeyCode, Mat3, Mat4, Texture2D, Vec2};
+use macroquad::{
+    prelude::{color_u8, vec2, Color, KeyCode, Mat3, Mat4, Texture2D, Vec2},
+    text::Font,
+};
 use std::collections::HashMap;
 
 //colors
 pub const DARK: Color = color_u8!(49, 47, 40, 255);
 pub const LIGHT: Color = color_u8!(218, 216, 209, 255);
 
-const TETROMINO_SEED: u64 = 792164921846;
-
 pub const SCREEN_WIDTH: i32 = 512;
 pub const SCREEN_HEIGHT: i32 = 480;
-pub const GAME_WIDTH: i32 = 32;
-pub const GAME_HEIGHT: i32 = 30;
+pub const GAME_WIDTH: f32 = 32.0;
+pub const GAME_HEIGHT: f32 = 30.0;
 pub const PIXELS_PER_UNIT: i32 = 16;
 
 pub const WELL_WIDTH: usize = 10;
@@ -27,7 +28,7 @@ pub const LOCK_DELAY: f32 = 0.5;
 pub const HARD_DROP_GRAVITY: f32 = 1.0;
 pub const SOFT_DROP_GRAVITY: f32 = 5.0;
 pub const ENTRY_DELAY: f32 = 20.0;
-pub const SCORE_TIMEOUT: f32 = 60.0;
+pub const SCORE_TIMEOUT: usize = 60;
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub enum TetrominoType {
@@ -120,6 +121,11 @@ pub struct Gravity {
     pub max: f32,
 }
 
+pub struct ScorePopup {
+    pub val: usize,
+    pub creation: usize,
+}
+
 pub struct GameState {
     pub debug: bool,
     pub scl: f32,
@@ -134,7 +140,9 @@ pub struct GameState {
     pub gravity: Gravity,
     pub hold: Option<Tetromino>,
     pub textures: Texture2D,
+    pub font: Font,
     pub statistics: HashMap<TetrominoType, usize>,
+    pub last_score: ScorePopup,
 }
 
 pub fn get_level_gravity_max(level: usize) -> f32 {
@@ -182,6 +190,11 @@ pub fn get_game_state() -> GameState {
         },
         hold: None,
         textures: Texture2D::empty(),
+        font: Font::default(),
         statistics: spawner::statistics(),
+        last_score: ScorePopup {
+            val: 0,
+            creation: 0,
+        },
     }
 }

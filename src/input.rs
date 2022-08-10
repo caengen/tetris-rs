@@ -1,7 +1,7 @@
 use crate::{
     components::{
-        get_level_gravity_max, Ghost, AUTO_SHIFT_DELAY, HARD_DROP_GRAVITY, LOCK_DELAY,
-        SOFT_DROP_GRAVITY,
+        get_game_state, get_level_gravity_max, Ghost, AUTO_SHIFT_DELAY, HARD_DROP_GRAVITY,
+        LOCK_DELAY, SOFT_DROP_GRAVITY,
     },
     spawner::{drain_next, reset_transform},
 };
@@ -111,6 +111,11 @@ pub fn input(gs: &mut GameState) {
     if is_key_pressed(KeyCode::Space) && !gs.ghost.dirty {
         gs.current.sonic_lock = true;
         gs.current.pos = gs.ghost.pos
+    }
+    if is_key_pressed(KeyCode::R) {
+        let textures = gs.textures;
+        *gs = get_game_state();
+        gs.textures = textures;
     }
     if is_key_pressed(KeyCode::C) {
         if gs.current.held {

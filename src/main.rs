@@ -24,7 +24,7 @@ pub fn rel_xy_idx(x: f32, y: f32, w: f32) -> usize {
 fn update_ghost(gs: &mut GameState) {
     gs.ghost.dirty = false;
     let mut pos = gs.current.pos;
-    while pos.y >= 0.0 as f32 {
+    while pos.y >= 0.0 {
         if should_commit_tetromino(&gs.current, &pos, &gs.placed_blocks) {
             break;
         }
@@ -34,7 +34,7 @@ fn update_ghost(gs: &mut GameState) {
     gs.ghost.pos = pos;
 }
 
-fn calculate_score(gs: &mut GameState, completed_lines: &Vec<usize>) {
+fn calculate_score(gs: &mut GameState, completed_lines: &Vec<usize>) -> usize {
     let n = completed_lines.len();
     gs.score.lines += n;
     gs.score.level = gs.score.lines / 10;
@@ -45,7 +45,8 @@ fn calculate_score(gs: &mut GameState, completed_lines: &Vec<usize>) {
         4 => 1200 * (n + 1),
         _ => 0,
     };
-    gs.score.val += score;
+
+    score
 }
 
 fn commit_tetromino(gs: &mut GameState) {
@@ -73,7 +74,12 @@ fn commit_tetromino(gs: &mut GameState) {
     if completed_lines.len() > 0 {
         spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
         apply_gravity(&mut gs.placed_blocks, &completed_lines);
-        calculate_score(gs, &completed_lines);
+        let score = calculate_score(gs, &completed_lines);
+        gs.score.val += score;
+        gs.last_score = ScorePopup {
+            val: score,
+            creation: 0,
+        }
     }
 }
 
@@ -83,14 +89,17 @@ fn update(gs: &mut GameState) {
     if gs.current.entry_timer < ENTRY_DELAY {
         gs.current.entry_timer += 1.0;
     }
-
-    if gs.ghost.dirty {
-        update_ghost(gs);
+    if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
+        gs.last_score.creation += 1;
     }
 
     // only add if locked on previous frame
     if gs.current.locking {
         gs.current.lock_timer += delta;
+    }
+
+    if gs.ghost.dirty {
+        update_ghost(gs);
     }
 
     let on_surface = should_commit_tetromino(&gs.current, &gs.current.pos, &gs.placed_blocks);
@@ -125,12 +134,13 @@ async fn main() {
     rand::srand(macroquad::miniquad::date::now() as u64);
 
     let mut gs = get_game_state();
-
-    let blocks_texture: Texture2D = load_texture("src/blocks.png").await.unwrap();
+    let blocks_texture: Texture2D = load_texture("assets/blocks.png").await.unwrap();
+    let font = load_ttf_font("assets/visitor.ttf").await.unwrap();
     gs.textures = blocks_texture;
+    gs.font = font;
 
     loop {
-        gs.scl = screen_width() / GAME_WIDTH as f32;
+        gs.scl = screen_width() / GAME_WIDTH;
 
         if !gs.score.topout {
             input(&mut gs);
