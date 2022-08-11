@@ -578,7 +578,7 @@ pub fn draw(gs: &GameState) {
                     WELL_WIDTH as f32 * line_clear.counter as f32 * 1.5 / LINE_CLEAR_DELAY as f32,
                 ) * gs.scl,
                 line_clear.lines.len() as f32 * gs.scl,
-                LIGHT,
+                DARK,
             );
         }
         None => {}
