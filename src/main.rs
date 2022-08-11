@@ -107,6 +107,7 @@ fn update(gs: &mut GameState) {
             if line_clear.counter >= LINE_CLEAR_DELAY {
                 remove_lines(&mut gs.placed_blocks, &line_clear.lines);
                 gs.line_clear = None;
+                gs.ghost.dirty = true;
             }
         }
         None => {}
