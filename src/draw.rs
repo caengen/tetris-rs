@@ -281,14 +281,24 @@ fn draw_placed(
                 let x = idx as usize % WELL_WIDTH;
                 let y = idx as usize / WELL_WIDTH;
 
-                draw_block(
-                    scl,
-                    textures,
-                    (offset.x + x as f32) * scl,
-                    (offset.y + y as f32) * scl,
-                    block.kind,
-                    false,
-                );
+                if *debug {
+                    draw_rectangle(
+                        (offset.x + x as f32) * scl,
+                        (offset.y + y as f32) * scl,
+                        w,
+                        w,
+                        GRAY,
+                    );
+                } else {
+                    draw_block(
+                        scl,
+                        textures,
+                        (offset.x + x as f32) * scl,
+                        (offset.y + y as f32) * scl,
+                        block.kind,
+                        false,
+                    );
+                }
             }
             _ => {}
         }
