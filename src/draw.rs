@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
-use crate::components::{ScorePopup, ENTRY_DELAY, PIXELS_PER_UNIT, SCORE_TIMEOUT};
+use crate::components::{
+    ScorePopup, ENTRY_DELAY, LINE_CLEAR_DELAY, PIXELS_PER_UNIT, SCORE_TIMEOUT,
+};
 
 use super::{
     Block, GameState, Score, Tetromino, TetrominoType, DARK, GAME_HEIGHT, GAME_WIDTH, LIGHT,
@@ -528,7 +530,13 @@ pub fn draw(gs: &GameState) {
         &gs.statistics,
     );
 
-    let entered = gs.current.entry_timer >= ENTRY_DELAY;
+    let entered = match &gs.line_clear {
+        Some(line_clear) => {
+            gs.current.entry_timer >= ENTRY_DELAY && line_clear.counter >= LINE_CLEAR_DELAY
+        }
+        None => gs.current.entry_timer >= ENTRY_DELAY,
+    };
+
     if entered {
         draw_tetromino(
             &gs.textures,
@@ -558,6 +566,22 @@ pub fn draw(gs: &GameState) {
             ),
             &gs.current,
         );
+    }
+
+    match &gs.line_clear {
+        Some(line_clear) => {
+            draw_rectangle(
+                offset.x * gs.scl,
+                (offset.y + line_clear.y_pos as f32) * gs.scl,
+                f32::min(
+                    WELL_WIDTH as f32,
+                    WELL_WIDTH as f32 * line_clear.counter as f32 * 1.5 / LINE_CLEAR_DELAY as f32,
+                ) * gs.scl,
+                line_clear.lines.len() as f32 * gs.scl,
+                LIGHT,
+            );
+        }
+        None => {}
     }
 
     draw_score(&gs.textures, &gs.font, gs.scl, &gs.score);

@@ -72,25 +72,44 @@ fn commit_tetromino(gs: &mut GameState) {
     gs.current = drain_next(gs);
     let completed_lines = collision::completed_lines(&gs.placed_blocks);
     if completed_lines.len() > 0 {
-        spawner::despawn_blocks(&mut gs.placed_blocks, &completed_lines);
-        apply_gravity(&mut gs.placed_blocks, &completed_lines);
         let score = calculate_score(gs, &completed_lines);
         gs.score.val += score;
         gs.last_score = ScorePopup {
             val: score,
             creation: 0,
-        }
+        };
+
+        gs.line_clear = Some(LineClear {
+            y_pos: *completed_lines.iter().min().unwrap(),
+            lines: completed_lines.clone(),
+            counter: 0,
+        });
     }
+}
+
+fn remove_lines(placed_blocks: &mut Vec<Option<Block>>, completed_lines: &Vec<usize>) {
+    spawner::despawn_blocks(placed_blocks, &completed_lines);
+    apply_gravity(placed_blocks, &completed_lines);
 }
 
 fn update(gs: &mut GameState) {
     let delta = get_frame_time();
     gs.gravity.meter += 1.0;
     if gs.current.entry_timer < ENTRY_DELAY {
-        gs.current.entry_timer += 1.0;
+        gs.current.entry_timer += 1;
     }
     if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
         gs.last_score.creation += 1;
+    }
+    match &mut gs.line_clear {
+        Some(line_clear) => {
+            line_clear.counter += 1;
+            if line_clear.counter >= LINE_CLEAR_DELAY {
+                remove_lines(&mut gs.placed_blocks, &line_clear.lines);
+                gs.line_clear = None;
+            }
+        }
+        None => {}
     }
 
     // only add if locked on previous frame

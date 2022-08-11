@@ -27,7 +27,8 @@ pub const AUTO_SHIFT_DELAY: f64 = 0.3;
 pub const LOCK_DELAY: f32 = 0.5;
 pub const HARD_DROP_GRAVITY: f32 = 1.0;
 pub const SOFT_DROP_GRAVITY: f32 = 5.0;
-pub const ENTRY_DELAY: f32 = 20.0;
+pub const ENTRY_DELAY: usize = 20;
+pub const LINE_CLEAR_DELAY: usize = 20;
 pub const SCORE_TIMEOUT: usize = 60;
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
@@ -53,7 +54,7 @@ pub struct Tetromino {
     pub color: Color,
     pub ghost_color: Color,
     pub lock_timer: f32,
-    pub entry_timer: f32,
+    pub entry_timer: usize,
     pub locking: bool,
     pub sonic_lock: bool,
     pub held: bool,
@@ -91,6 +92,12 @@ impl Tetromino {
 
         points
     }
+}
+
+pub struct LineClear {
+    pub y_pos: usize,
+    pub lines: Vec<usize>,
+    pub counter: usize,
 }
 
 pub struct Ghost {
@@ -143,6 +150,7 @@ pub struct GameState {
     pub font: Font,
     pub statistics: HashMap<TetrominoType, usize>,
     pub last_score: ScorePopup,
+    pub line_clear: Option<LineClear>,
 }
 
 pub fn get_level_gravity_max(level: usize) -> f32 {
@@ -196,5 +204,6 @@ pub fn get_game_state() -> GameState {
             val: 0,
             creation: 0,
         },
+        line_clear: None,
     }
 }
