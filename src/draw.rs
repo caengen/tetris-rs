@@ -14,7 +14,7 @@ use macroquad::{
         draw_text, draw_texture_ex, get_fps, measure_text, vec2, DrawTextureParams, Rect,
         Texture2D, Vec2, BLUE, GRAY, PINK, RED,
     },
-    text::{draw_text_ex, Font, TextParams},
+    text::{draw_text_ex, Font, TextDimensions, TextParams},
 };
 
 pub fn draw_well(offset: Vec2, scl: f32) {
@@ -161,22 +161,12 @@ fn draw_visual_only_tetromino(
     }
 }
 
-fn draw_hold(textures: &Texture2D, font: &Font, scl: f32, hold: &Option<Tetromino>) {
-    let font_size = 1.5 * scl;
+fn draw_hold(textures: &Texture2D, params: &TextParamsConfig, scl: f32, hold: &Option<Tetromino>) {
     let text = &"HOLD".to_string();
-    let text_measure = measure_text(text, Some(*font), font_size as _, 1.0);
-    let x = (6.0 - text_measure.width / scl) * scl;
-    draw_text_ex(
-        text,
-        x,
-        2.0 * scl,
-        TextParams {
-            font_size: font_size as u16,
-            font: *font,
-            color: LIGHT,
-            ..Default::default()
-        },
-    );
+    let (text_params, dims) = params.params_and_dims(text, 1.5);
+
+    let x = (6.0 - dims.width / scl) * scl;
+    draw_text_ex(text, x, 2.0 * scl, text_params);
     draw_border(textures, scl, vec2(2.0, 1.0), 4.0, 4.0);
 
     match hold {
@@ -235,22 +225,21 @@ fn draw_statistics(
     }
 }
 
-fn draw_next(textures: &Texture2D, font: &Font, scl: f32, next: &Vec<Tetromino>) {
-    let font_size = 1.5 * scl;
+fn draw_next(
+    textures: &Texture2D,
+    text_config: &TextParamsConfig,
+    scl: f32,
+    next: &Vec<Tetromino>,
+) {
     let text = &"NEXT".to_string();
-    let text_measure = measure_text(text, None, font_size as _, 1.0);
-    let text_params = TextParams {
-        font_size: font_size as u16,
-        font: *font,
-        color: LIGHT,
-        ..Default::default()
-    };
-    let x = GAME_WIDTH - 5.0 - text_measure.width / scl;
+    let (text_params, dims) = text_config.params_and_dims(text, 1.5);
+
+    let x = GAME_WIDTH - 5.5 - dims.width / 2.0 / scl;
     draw_text_ex(text, x * scl, 2.0 * scl, text_params);
 
     for (i, t) in next.iter().enumerate() {
         let y_dis = GAME_HEIGHT as f32 - 13.0 - (3.0 * i as f32);
-        let pos = vec2(x, y_dis);
+        let pos = vec2(x + 0.5, y_dis);
 
         let offset = if t.width == 4 {
             vec2(-0.5, 0.5)
@@ -263,7 +252,7 @@ fn draw_next(textures: &Texture2D, font: &Font, scl: f32, next: &Vec<Tetromino>)
             break;
         }
     }
-    draw_border(textures, scl, vec2(GAME_WIDTH - 8.0, 1.0), 4.0, 13.0);
+    draw_border(textures, scl, vec2(GAME_WIDTH - 8.0, 1.0), 5.0, 13.0);
 }
 
 fn draw_placed(
@@ -512,6 +501,31 @@ fn draw_score_popup(font: &Font, scl: f32, well_pos: &Vec2, score: &ScorePopup) 
     );
 }
 
+#[derive(Clone, Copy)]
+pub struct TextParamsConfig {
+    pub base: TextParams,
+    pub scl: f32,
+}
+impl TextParamsConfig {
+    fn params_and_dims(self: Self, text: &String, font_size: f32) -> (TextParams, TextDimensions) {
+        (
+            TextParams {
+                font: self.base.font,
+                font_size: (font_size * self.scl) as u16,
+                color: self.base.color,
+                font_scale: self.base.font_scale,
+                font_scale_aspect: self.base.font_scale_aspect,
+            },
+            measure_text(
+                text,
+                Some(self.base.font),
+                (font_size * self.scl) as u16,
+                1.0,
+            ),
+        )
+    }
+}
+
 pub fn draw(gs: &GameState) {
     clear_background(DARK);
 
@@ -519,6 +533,8 @@ pub fn draw(gs: &GameState) {
         GAME_WIDTH / 2.0 - WELL_WIDTH as f32 / 2.0,
         GAME_HEIGHT / 2.0 - WELL_HEIGHT as f32 / 2.0,
     );
+
+    // game stuff
     draw_well(offset, gs.scl);
     draw_border(
         &gs.textures,
@@ -528,17 +544,6 @@ pub fn draw(gs: &GameState) {
         WELL_HEIGHT as f32,
     );
     draw_placed(&gs.textures, offset, gs.scl, &gs.placed_blocks, &gs.debug);
-
-    draw_hold(&gs.textures, &gs.font, gs.scl, &gs.hold);
-    draw_next(&gs.textures, &gs.font, gs.scl, &gs.next);
-
-    draw_statistics(
-        &gs.textures,
-        &gs.font,
-        gs.scl,
-        &gs.tetrominos,
-        &gs.statistics,
-    );
 
     let entered = match &gs.line_clear {
         Some(line_clear) => {
@@ -593,6 +598,27 @@ pub fn draw(gs: &GameState) {
         }
         None => {}
     }
+
+    // information stuff
+    let text_config = TextParamsConfig {
+        scl: gs.scl,
+        base: TextParams {
+            font: gs.font,
+            font_size: 1,
+            color: LIGHT,
+            ..Default::default()
+        },
+    };
+
+    draw_hold(&gs.textures, &text_config, gs.scl, &gs.hold);
+    draw_next(&gs.textures, &text_config, gs.scl, &gs.next);
+    draw_statistics(
+        &gs.textures,
+        &gs.font,
+        gs.scl,
+        &gs.tetrominos,
+        &gs.statistics,
+    );
 
     draw_score(&gs.textures, &gs.font, gs.scl, &gs.score);
     if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
