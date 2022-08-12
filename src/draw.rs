@@ -460,7 +460,7 @@ fn draw_score_popup(text_config: &TextParamsConfig, scl: f32, well_pos: &Vec2, s
     draw_text_ex(
         &score_text,
         x + 0.1 * scl,
-        y,
+        y + 0.1 * scl,
         TextParams {
             font_size: params.font_size,
             font: params.font,
@@ -522,11 +522,6 @@ pub fn draw(gs: &GameState) {
         &gs.tetrominos,
         &gs.statistics,
     );
-
-    draw_score(&gs.textures, &text_config, gs.scl, &gs.score);
-    if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
-        draw_score_popup(&text_config, gs.scl, &offset, &gs.last_score);
-    }
 
     if gs.debug {
         draw_text(
@@ -622,6 +617,11 @@ pub fn draw(gs: &GameState) {
             ),
             &gs.current,
         );
+    }
+
+    draw_score(&gs.textures, &text_config, gs.scl, &gs.score);
+    if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
+        draw_score_popup(&text_config, gs.scl, &offset, &gs.last_score);
     }
 
     match &gs.line_clear {
