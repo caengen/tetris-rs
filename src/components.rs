@@ -5,6 +5,18 @@ use macroquad::{
 };
 use std::collections::HashMap;
 
+#[derive(PartialEq)]
+pub enum GameMode {
+    Title,
+    GameTypeMenu,
+    LevelAndHeightMenu,
+    Play,
+    Pause,
+    HighScore,
+    Ending,
+    Demo,
+}
+
 //colors
 pub const DARK: Color = color_u8!(49, 47, 40, 255);
 pub const LIGHT: Color = color_u8!(218, 216, 209, 255);
@@ -151,6 +163,7 @@ pub struct GameState {
     pub statistics: HashMap<TetrominoType, usize>,
     pub last_score: ScorePopup,
     pub line_clear: Option<LineClear>,
+    pub game_mode: GameMode,
 }
 
 pub fn get_level_gravity_max(level: usize) -> f32 {
@@ -205,5 +218,6 @@ pub fn get_game_state() -> GameState {
             creation: 0,
         },
         line_clear: None,
+        game_mode: GameMode::Play,
     }
 }

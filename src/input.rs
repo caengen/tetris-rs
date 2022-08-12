@@ -1,7 +1,7 @@
 use crate::{
     components::{
-        get_game_state, get_level_gravity_max, Ghost, AUTO_SHIFT_DELAY, HARD_DROP_GRAVITY,
-        LOCK_DELAY, SOFT_DROP_GRAVITY,
+        get_game_state, get_level_gravity_max, GameMode, Ghost, AUTO_SHIFT_DELAY,
+        HARD_DROP_GRAVITY, LOCK_DELAY, SOFT_DROP_GRAVITY,
     },
     spawner::{drain_next, reset_transform},
 };
@@ -36,6 +36,20 @@ fn move_right(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
 }
 
 pub fn input(gs: &mut GameState) {
+    match gs.game_mode {
+        GameMode::Play => play_input(gs),
+        GameMode::Pause => pause_input(gs),
+        _ => {}
+    }
+}
+
+fn pause_input(gs: &mut GameState) {
+    if is_key_pressed(KeyCode::P) {
+        gs.game_mode = GameMode::Play;
+    }
+}
+
+pub fn play_input(gs: &mut GameState) {
     let time = get_time();
 
     if is_key_released(KeyCode::Left) {
@@ -141,6 +155,9 @@ pub fn input(gs: &mut GameState) {
             }
         }
         gs.ghost.dirty = true;
+    }
+    if is_key_pressed(KeyCode::P) {
+        gs.game_mode = GameMode::Pause;
     }
     if is_key_pressed(KeyCode::G) {
         gs.debug = !gs.debug;

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::components::{
-    ScorePopup, ENTRY_DELAY, LINE_CLEAR_DELAY, PIXELS_PER_UNIT, SCORE_TIMEOUT,
+    GameMode, ScorePopup, ENTRY_DELAY, LINE_CLEAR_DELAY, PIXELS_PER_UNIT, SCORE_TIMEOUT,
 };
 
 use super::{
@@ -504,7 +504,39 @@ pub fn draw(gs: &GameState) {
         GAME_HEIGHT / 2.0 - WELL_HEIGHT as f32 / 2.0,
     );
 
-    // game stuff
+    // information stuff
+    let text_config = TextParamsConfig {
+        scl: gs.scl,
+        base: TextParams {
+            font: gs.font,
+            font_size: 1,
+            color: LIGHT,
+            ..Default::default()
+        },
+    };
+
+    draw_statistics(
+        &gs.textures,
+        &text_config,
+        gs.scl,
+        &gs.tetrominos,
+        &gs.statistics,
+    );
+
+    draw_score(&gs.textures, &text_config, gs.scl, &gs.score);
+    if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
+        draw_score_popup(&text_config, gs.scl, &offset, &gs.last_score);
+    }
+
+    if gs.debug {
+        draw_text(
+            format!("{} {}", gs.current.pos.x, gs.current.pos.y).as_str(),
+            gs.current.pos.x + 20.0,
+            gs.current.pos.y - WELL_HEIGHT as f32 - 20.0,
+            1.25 * gs.scl,
+            BLUE,
+        );
+    }
     draw_well(offset, gs.scl);
     draw_border(
         &gs.textures,
@@ -513,6 +545,45 @@ pub fn draw(gs: &GameState) {
         WELL_WIDTH as f32,
         WELL_HEIGHT as f32,
     );
+
+    if gs.game_mode == GameMode::Pause {
+        let text1 = &"GAME".to_string();
+        let text2 = &"PAUSED".to_string();
+        let text3 = &"\"P\" TO RESUME".to_string();
+        let (params1, dims1) = text_config.params_and_dims(text1, 2.0);
+        let (params2, dims2) = text_config.params_and_dims(text2, 2.0);
+        let (params3, dims3) = text_config.params_and_dims(text3, 1.0);
+        draw_text_ex(
+            text1,
+            (offset.x + WELL_WIDTH as f32 / 2.0) * gs.scl - dims1.width / 2.0,
+            (offset.y + WELL_HEIGHT as f32 / 3.0) * gs.scl - dims1.height / 2.0,
+            params1,
+        );
+        draw_text_ex(
+            text2,
+            (offset.x + WELL_WIDTH as f32 / 2.0) * gs.scl - dims2.width / 2.0,
+            (offset.y + WELL_HEIGHT as f32 / 3.0) * gs.scl - dims2.height / 2.0
+                + dims1.height
+                + 10.0,
+            params2,
+        );
+        draw_text_ex(
+            text3,
+            (offset.x + WELL_WIDTH as f32 / 2.0) * gs.scl - dims3.width / 2.0,
+            (offset.y + WELL_HEIGHT as f32 / 3.0) * gs.scl - dims3.height / 2.0
+                + dims1.height
+                + dims2.height
+                + 10.0,
+            params3,
+        );
+        draw_border(&gs.textures, gs.scl, vec2(2.0, 1.0), 4.0, 4.0);
+        draw_border(&gs.textures, gs.scl, vec2(GAME_WIDTH - 8.0, 1.0), 5.0, 13.0);
+        return; // not giving the player an advantage by seeing the well
+    }
+    draw_hold(&gs.textures, &text_config, gs.scl, &gs.hold);
+    draw_next(&gs.textures, &text_config, gs.scl, &gs.next);
+
+    // game stuff
     draw_placed(&gs.textures, offset, gs.scl, &gs.placed_blocks, &gs.debug);
 
     let entered = match &gs.line_clear {
@@ -567,41 +638,5 @@ pub fn draw(gs: &GameState) {
             );
         }
         None => {}
-    }
-
-    // information stuff
-    let text_config = TextParamsConfig {
-        scl: gs.scl,
-        base: TextParams {
-            font: gs.font,
-            font_size: 1,
-            color: LIGHT,
-            ..Default::default()
-        },
-    };
-
-    draw_hold(&gs.textures, &text_config, gs.scl, &gs.hold);
-    draw_next(&gs.textures, &text_config, gs.scl, &gs.next);
-    draw_statistics(
-        &gs.textures,
-        &text_config,
-        gs.scl,
-        &gs.tetrominos,
-        &gs.statistics,
-    );
-
-    draw_score(&gs.textures, &text_config, gs.scl, &gs.score);
-    if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
-        draw_score_popup(&text_config, gs.scl, &offset, &gs.last_score);
-    }
-
-    if gs.debug {
-        draw_text(
-            format!("{} {}", gs.current.pos.x, gs.current.pos.y).as_str(),
-            gs.current.pos.x + 20.0,
-            gs.current.pos.y - WELL_HEIGHT as f32 - 20.0,
-            1.25 * gs.scl,
-            BLUE,
-        );
     }
 }

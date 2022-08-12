@@ -93,7 +93,13 @@ fn remove_lines(placed_blocks: &mut Vec<Option<Block>>, completed_lines: &Vec<us
 }
 
 fn update(gs: &mut GameState) {
-    let delta = get_frame_time();
+    match gs.game_mode {
+        GameMode::Play => play_update(gs),
+        _ => {}
+    }
+}
+
+fn play_update(gs: &mut GameState) {
     gs.gravity.meter += 1.0;
     if gs.current.entry_timer < ENTRY_DELAY {
         gs.current.entry_timer += 1;
