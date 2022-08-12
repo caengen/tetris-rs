@@ -187,37 +187,34 @@ fn draw_hold(textures: &Texture2D, params: &TextParamsConfig, scl: f32, hold: &O
 
 fn draw_statistics(
     textures: &Texture2D,
-    font: &Font,
+    text_config: &TextParamsConfig,
     scl: f32,
     tetrominos: &Vec<Tetromino>,
     statistics: &HashMap<TetrominoType, usize>,
 ) {
-    let font_size = 1.5 * scl;
     let text = &"STATS".to_string();
-    let text_measure = measure_text(text, None, font_size as _, 1.0);
-    let x = 5.0 - text_measure.width / scl;
+    let (params, dims) = text_config.params_and_dims(text, 1.5);
+    let x = 5.0 - dims.width / scl;
     let y = 10.0;
-    let text_params = TextParams {
-        font_size: font_size as u16,
-        font: *font,
-        color: LIGHT,
-        ..Default::default()
-    };
-    draw_text_ex(text, (x + 1.0) * scl, y * scl, text_params);
+
+    draw_text_ex(text, (x + 1.0) * scl, y * scl, params);
     draw_border(textures, scl, vec2(x, y - 1.0), 7.0, 17.0);
+
     for (i, t) in tetrominos.iter().enumerate() {
         let stat = statistics.get(&t.kind);
         let ty = y as i32 - 3 - (3 * i as i32);
-        draw_visual_only_tetromino(scl / 1.25, textures, &vec2(2.5, ty as f32), t);
+        draw_visual_only_tetromino(scl / 1.25, textures, &vec2(1.0, ty as f32), t);
         match stat {
             Some(stat) => {
                 let stat_text = &format!("{:0>3}", stat).to_string();
-                let stat_measure = measure_text(&stat_text, None, font_size as _, 1.0);
+                let stat_measure =
+                    measure_text(&stat_text, Some(params.font), (1.5 * scl) as u16, 1.0);
+
                 draw_text_ex(
                     stat_text,
-                    (x + 6.125) * scl - stat_measure.width,
+                    (x + 6.75) * scl - stat_measure.width,
                     (y as f32 + 1.875 + (2.25 * i as f32)) as f32 * scl,
-                    text_params,
+                    params,
                 );
             }
             _ => {}
@@ -454,34 +451,24 @@ fn draw_border(textures: &Texture2D, scl: f32, pos: Vec2, w: f32, h: f32) {
     );
 }
 
-fn draw_score_popup(font: &Font, scl: f32, well_pos: &Vec2, score: &ScorePopup) {
-    let font_size = 2.0 * scl;
-
+fn draw_score_popup(text_config: &TextParamsConfig, scl: f32, well_pos: &Vec2, score: &ScorePopup) {
     let score_text = &format!("{}", score.val).to_string();
-    let text_measure = measure_text(score_text, Some(*font), font_size as _, 1.0);
+    let (params, dims) = text_config.params_and_dims(score_text, 2.0);
+    let x = (well_pos.x + (WELL_WIDTH / 2) as f32) * scl - dims.width / 2.0;
+    let y = (well_pos.y + (WELL_HEIGHT / 3) as f32) * scl;
 
     draw_text_ex(
         &score_text,
-        (well_pos.x + (WELL_WIDTH / 2) as f32) * scl - text_measure.width / 2.0 + 0.1 * scl,
-        (well_pos.y + (WELL_HEIGHT / 3) as f32) * scl,
+        x + 0.1 * scl,
+        y,
         TextParams {
-            font_size: font_size as u16,
-            font: *font,
+            font_size: params.font_size,
+            font: params.font,
             color: DARK,
             ..Default::default()
         },
     );
-    draw_text_ex(
-        &score_text,
-        (well_pos.x + (WELL_WIDTH / 2) as f32) * scl - text_measure.width / 2.0,
-        (well_pos.y + (WELL_HEIGHT / 3) as f32) * scl,
-        TextParams {
-            font_size: font_size as u16,
-            font: *font,
-            color: LIGHT,
-            ..Default::default()
-        },
-    );
+    draw_text_ex(&score_text, x, y, params);
 }
 
 #[derive(Clone, Copy)]
@@ -597,7 +584,7 @@ pub fn draw(gs: &GameState) {
     draw_next(&gs.textures, &text_config, gs.scl, &gs.next);
     draw_statistics(
         &gs.textures,
-        &gs.font,
+        &text_config,
         gs.scl,
         &gs.tetrominos,
         &gs.statistics,
@@ -605,7 +592,7 @@ pub fn draw(gs: &GameState) {
 
     draw_score(&gs.textures, &text_config, gs.scl, &gs.score);
     if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
-        draw_score_popup(&gs.font, gs.scl, &offset, &gs.last_score);
+        draw_score_popup(&text_config, gs.scl, &offset, &gs.last_score);
     }
 
     if gs.debug {
