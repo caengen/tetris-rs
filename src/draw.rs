@@ -294,70 +294,53 @@ fn draw_placed(
     }
 }
 
-fn draw_score(textures: &Texture2D, font: &Font, scl: f32, score: &Score) {
-    let font_size = 1.25 * scl;
+fn draw_score(textures: &Texture2D, text_config: &TextParamsConfig, scl: f32, score: &Score) {
+    let lines_head_y = (GAME_HEIGHT - 12.0) * scl;
+    let lines_head = &"LINES".to_string();
+    let lines_body = &format!("{:0>3}", score.lines).to_string();
+    let (base_params, base_dimensions) = text_config.params_and_dims(lines_head, 1.25);
+    // Everything is measured relative to the first heading
+    let x = (GAME_WIDTH - 6.0 - base_dimensions.width / 2.0 / scl) * scl;
+    draw_text_ex(lines_head, x, lines_head_y, base_params);
+    draw_text_ex(lines_body, x, lines_head_y + 1.0 * scl, base_params);
 
-    let lines_txt = &"LINES".to_string();
-    let lines_val_txt = &format!("{:0>3}", score.lines).to_string();
-    let text_measure = measure_text(lines_txt, Some(*font), font_size as _, 1.0);
-    let text_params = TextParams {
-        font_size: font_size as u16,
-        font: *font,
-        color: LIGHT,
-        ..Default::default()
-    };
+    let level_head_y = (GAME_HEIGHT - 9.5) * scl;
+    let level_head = &"LEVEL".to_string();
+    let level_body = &format!("{:0>2}", score.level).to_string();
+    draw_text_ex(level_head, x, level_head_y, base_params);
+    draw_text_ex(level_body, x, level_head_y + 1.0 * scl, base_params);
 
-    let x = (GAME_WIDTH - 6.0 - text_measure.width / 2.0 / scl) * scl;
-    let y_1 = (GAME_HEIGHT - 7.0) * scl;
-    let y_2 = (GAME_HEIGHT - 9.5) * scl;
-    let level_val_y = (GAME_HEIGHT - 8.5) * scl;
-    let y_3 = (GAME_HEIGHT - 12.0) * scl;
-    let line_val_y = (GAME_HEIGHT - 11.0) * scl;
-
-    let level_txt = &"LEVEL".to_string();
-    let level_val_txt = &format!("{:0>2}", score.level).to_string();
-    let score_txt = &"SCORE".to_string();
-
-    draw_text_ex(lines_txt, x, y_3, text_params);
-    draw_text_ex(lines_val_txt, x, line_val_y, text_params);
-    draw_text_ex(level_txt, x, y_2, text_params);
-    draw_text_ex(level_val_txt, x, level_val_y, text_params);
-    draw_text_ex(score_txt, x, y_1, text_params);
+    let score_head = &"SCORE".to_string();
+    let score_head_y = (GAME_HEIGHT - 7.0) * scl;
+    draw_text_ex(score_head, x, score_head_y, base_params);
     draw_text_ex(
         &format!("{:0>6}", score.val),
         x,
-        y_1 + 1.0 * scl,
-        text_params,
+        score_head_y + 1.0 * scl,
+        base_params,
     );
-    let b_pos = vec2((GAME_WIDTH - 8.5), 17.0);
-    draw_border(textures, scl, b_pos, 7.0, 8.0);
+
+    let border_pos = vec2(GAME_WIDTH - 8.5, 17.0);
+    draw_border(textures, scl, border_pos, 7.0, 8.0);
 
     if score.topout {
-        let go_font_size = (3.0 * scl) as u16;
         let game_over_text = &"GAME OVER".to_string();
-        let go_measure = measure_text(game_over_text, Some(*font), go_font_size, 1.0);
+        let (game_over_params, game_over_dimensions) =
+            text_config.params_and_dims(game_over_text, 3.0);
+        let go_x = (GAME_WIDTH / 2.0) * scl - game_over_dimensions.width / 2.0;
+        let go_y = (GAME_HEIGHT / 3.0) * scl;
         draw_text_ex(
             "GAME OVER",
-            (GAME_WIDTH / 2.0) * scl - go_measure.width / 2.0 + 5.0,
-            (GAME_HEIGHT / 3.0) * scl + 5.0,
+            go_x + 5.0,
+            go_y + 5.0,
             TextParams {
-                font: *font,
-                font_size: go_font_size,
+                font: game_over_params.font,
+                font_size: game_over_params.font_size,
                 color: DARK,
                 ..Default::default()
             },
         );
-        draw_text_ex(
-            "GAME OVER",
-            (GAME_WIDTH / 2.0) * scl - go_measure.width / 2.0,
-            (GAME_HEIGHT / 3.0) * scl,
-            TextParams {
-                font: *font,
-                font_size: go_font_size,
-                color: LIGHT,
-                ..Default::default()
-            },
-        );
+        draw_text_ex("GAME OVER", go_x, go_y, game_over_params);
     }
 }
 
@@ -620,7 +603,7 @@ pub fn draw(gs: &GameState) {
         &gs.statistics,
     );
 
-    draw_score(&gs.textures, &gs.font, gs.scl, &gs.score);
+    draw_score(&gs.textures, &text_config, gs.scl, &gs.score);
     if gs.last_score.val > 0 && gs.last_score.creation < SCORE_TIMEOUT {
         draw_score_popup(&gs.font, gs.scl, &offset, &gs.last_score);
     }
