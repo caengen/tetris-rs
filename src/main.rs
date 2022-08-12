@@ -115,7 +115,7 @@ fn update(gs: &mut GameState) {
 
     // only add if locked on previous frame
     if gs.current.locking {
-        gs.current.lock_timer += delta;
+        gs.current.lock_counter += 1;
     }
 
     if gs.ghost.dirty {
@@ -128,7 +128,7 @@ fn update(gs: &mut GameState) {
     }
 
     if on_surface
-        && (gs.current.sonic_lock || (gs.current.locking && gs.current.lock_timer >= LOCK_DELAY))
+        && (gs.current.sonic_lock || (gs.current.locking && gs.current.lock_counter >= LOCK_DELAY))
     {
         commit_tetromino(gs);
     }

@@ -41,7 +41,7 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
                 tetromino.rot_index = (tetromino.rot_index + 1) % 4;
                 ghost.dirty = true;
                 if tetromino.locking {
-                    tetromino.lock_timer = 0.0;
+                    tetromino.lock_counter = 0;
                 }
             } else {
                 let res = mat3_super_kick(&I_KICKS, &new_tetromino, placed);
@@ -52,7 +52,7 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
                         tetromino.rot_index = (tetromino.rot_index + 1) % 4;
                         ghost.dirty = true;
                         if tetromino.locking {
-                            tetromino.lock_timer = 0.0;
+                            tetromino.lock_counter = 0;
                         }
                     }
                     Err(str) => {
@@ -71,7 +71,7 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
                 tetromino.rot_index = (tetromino.rot_index + 1) % 4;
                 ghost.dirty = true;
                 if tetromino.locking {
-                    tetromino.lock_timer = 0.0;
+                    tetromino.lock_counter = 0;
                 }
             } else {
                 let res = mat3_super_kick(&KICKS, &new_tetromino, placed);
@@ -82,7 +82,7 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
                         tetromino.rot_index = (tetromino.rot_index + 1) % 4;
                         ghost.dirty = true;
                         if tetromino.locking {
-                            tetromino.lock_timer = 0.0;
+                            tetromino.lock_counter = 0;
                         }
                     }
                     Err(str) => {

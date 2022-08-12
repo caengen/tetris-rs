@@ -13,7 +13,7 @@ pub fn move_downwards(gs: &mut GameState) {
     gs.current.pos = new_pos;
     gs.gravity.meter = 0.0;
     if gs.current.locking {
-        gs.current.lock_timer = 0.0;
+        gs.current.lock_counter = 0;
     }
 }
 

@@ -194,7 +194,7 @@ fn draw_statistics(
 ) {
     let text = &"STATS".to_string();
     let (params, dims) = text_config.params_and_dims(text, 1.5);
-    let x = 5.0 - dims.width / scl;
+    let x = 6.0 - dims.width / scl;
     let y = 10.0;
 
     draw_text_ex(text, (x + 1.0) * scl, y * scl, params);
@@ -203,7 +203,7 @@ fn draw_statistics(
     for (i, t) in tetrominos.iter().enumerate() {
         let stat = statistics.get(&t.kind);
         let ty = y as i32 - 3 - (3 * i as i32);
-        draw_visual_only_tetromino(scl / 1.25, textures, &vec2(1.0, ty as f32), t);
+        draw_visual_only_tetromino(scl / 1.25, textures, &vec2(2.5, ty as f32), t);
         match stat {
             Some(stat) => {
                 let stat_text = &format!("{:0>3}", stat).to_string();
