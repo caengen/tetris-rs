@@ -107,6 +107,26 @@ pub fn can_translate(tetromino: &Tetromino, placed: &Vec<Option<Block>>, new_pos
     false
 }
 
+pub fn can_translate_horizontally(
+    tetromino: &Tetromino,
+    placed: &Vec<Option<Block>>,
+    new_pos: &Vec2,
+) -> bool {
+    if new_pos.x < tetromino.pos.x {
+        return !wall_collision(tetromino, new_pos)
+            && !left_block_collision(placed, tetromino, &tetromino.pos);
+    } else if new_pos.x > tetromino.pos.x {
+        return !wall_collision(tetromino, &new_pos)
+            && !right_block_collision(placed, tetromino, &tetromino.pos);
+    } else if new_pos.x == tetromino.pos.x {
+        return !wall_collision(tetromino, new_pos)
+            && !left_block_collision(placed, tetromino, &tetromino.pos)
+            && !right_block_collision(placed, tetromino, &tetromino.pos);
+    }
+
+    false
+}
+
 pub fn completed_lines(placed: &Vec<Option<Block>>) -> Vec<usize> {
     let mut completed = Vec::new();
     for y in 0..WELL_HEIGHT {

@@ -7,13 +7,14 @@ use crate::{
 };
 
 use super::{
-    collision::can_translate, srs, Block, GameState, Tetromino, AUTO_SHIFT_TIMEOUT, WELL_WIDTH,
+    collision::can_translate_horizontally, srs, Block, GameState, Tetromino, AUTO_SHIFT_TIMEOUT,
+    WELL_WIDTH,
 };
 use macroquad::prelude::{get_time, is_key_down, is_key_pressed, is_key_released, vec2, KeyCode};
 
 fn move_left(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mut Ghost) {
     let new_pos = vec2(tetromino.pos.x - 1.0, tetromino.pos.y);
-    if can_translate(&tetromino, placed, &new_pos) {
+    if can_translate_horizontally(&tetromino, placed, &new_pos) {
         tetromino.pos = new_pos;
         ghost.pos.x = new_pos.x;
         ghost.dirty = true;
@@ -25,7 +26,7 @@ fn move_left(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mut
 
 fn move_right(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mut Ghost) {
     let new_pos = vec2(tetromino.pos.x + 1.0, tetromino.pos.y);
-    if can_translate(&tetromino, placed, &new_pos) {
+    if can_translate_horizontally(&tetromino, placed, &new_pos) {
         tetromino.pos = new_pos;
         ghost.pos.x = new_pos.x;
         ghost.dirty = true;
@@ -39,7 +40,14 @@ pub fn input(gs: &mut GameState) {
     match gs.game_mode {
         GameMode::Play => play_input(gs),
         GameMode::Pause => pause_input(gs),
+        GameMode::Title => title_input(gs),
         _ => {}
+    }
+}
+
+fn title_input(gs: &mut GameState) {
+    if is_key_pressed(KeyCode::Space) || is_key_pressed(KeyCode::Enter) {
+        gs.game_mode = GameMode::Play;
     }
 }
 
@@ -129,7 +137,7 @@ pub fn play_input(gs: &mut GameState) {
     if is_key_pressed(KeyCode::R) {
         let textures = gs.textures;
         let font = gs.font;
-        *gs = get_game_state();
+        *gs = get_game_state(GameMode::Play);
         gs.textures = textures;
         gs.font = font;
     }

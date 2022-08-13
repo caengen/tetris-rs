@@ -122,6 +122,7 @@ fn play_update(gs: &mut GameState) {
     // only add if locked on previous frame
     if gs.current.locking {
         gs.current.lock_counter += 1;
+        debug!("gs.current.lock_counter={}", gs.current.lock_counter);
     }
 
     if gs.ghost.dirty {
@@ -136,6 +137,11 @@ fn play_update(gs: &mut GameState) {
     if on_surface
         && (gs.current.sonic_lock || (gs.current.locking && gs.current.lock_counter >= LOCK_DELAY))
     {
+        debug!("commiting");
+        debug!("on_surface={}", on_surface);
+        debug!("gs.current.locking={}", gs.current.locking);
+        debug!("gs.current.lock_counter={}", gs.current.lock_counter);
+        debug!("LOCK_DELAY={}", LOCK_DELAY);
         commit_tetromino(gs);
     }
 
@@ -159,7 +165,7 @@ fn window_conf() -> window::Conf {
 async fn main() {
     rand::srand(macroquad::miniquad::date::now() as u64);
 
-    let mut gs = get_game_state();
+    let mut gs = get_game_state(GameMode::Title);
     let blocks_texture: Texture2D = load_texture("assets/blocks.png").await.unwrap();
     let font = load_ttf_font("assets/visitor.ttf").await.unwrap();
     gs.textures = blocks_texture;
