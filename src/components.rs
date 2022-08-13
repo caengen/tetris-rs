@@ -179,7 +179,7 @@ pub fn get_level_gravity_max(level: usize) -> f32 {
     }
 }
 
-pub fn get_game_state() -> GameState {
+pub fn get_game_state(mode: GameMode) -> GameState {
     let tetrominos = spawner::tetromino_set();
     let next = spawner::random_tetrominos(&tetrominos, 10);
     let current = spawner::spawn_tetromino(&tetrominos);
@@ -218,6 +218,6 @@ pub fn get_game_state() -> GameState {
             creation: 0,
         },
         line_clear: None,
-        game_mode: GameMode::Play,
+        game_mode: mode,
     }
 }

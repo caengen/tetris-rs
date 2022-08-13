@@ -496,15 +496,22 @@ impl TextParamsConfig {
     }
 }
 
+fn draw_title(gs: &GameState, text_config: &TextParamsConfig) {
+    let title = &"TETRIS".to_string();
+    let (title_params, title_dims) = text_config.params_and_dims(title, 8.0);
+    let x = (GAME_WIDTH / 2.0) * gs.scl - title_dims.width / 2.0;
+    let y = (GAME_HEIGHT / 3.0) * gs.scl;
+    draw_text_ex(title, x, y, title_params);
+
+    let start_text = &"PUSH START".to_string();
+    let (start_params, start_dims) = text_config.params_and_dims(start_text, 2.0);
+    let x = (GAME_WIDTH / 4.0) * gs.scl - start_dims.width / 2.0;
+    let y = (GAME_HEIGHT - GAME_HEIGHT / 3.0) * gs.scl;
+    draw_text_ex(&start_text, x, y, start_params);
+}
+
 pub fn draw(gs: &GameState) {
     clear_background(DARK);
-
-    let offset = vec2(
-        GAME_WIDTH / 2.0 - WELL_WIDTH as f32 / 2.0,
-        GAME_HEIGHT / 2.0 - WELL_HEIGHT as f32 / 2.0,
-    );
-
-    // information stuff
     let text_config = TextParamsConfig {
         scl: gs.scl,
         base: TextParams {
@@ -515,6 +522,20 @@ pub fn draw(gs: &GameState) {
         },
     };
 
+    match gs.game_mode {
+        GameMode::Title => draw_title(gs, &text_config),
+        GameMode::Play | GameMode::Pause => draw_play(gs, &text_config),
+        _ => {}
+    }
+}
+
+pub fn draw_play(gs: &GameState, text_config: &TextParamsConfig) {
+    let offset = vec2(
+        GAME_WIDTH / 2.0 - WELL_WIDTH as f32 / 2.0,
+        GAME_HEIGHT / 2.0 - WELL_HEIGHT as f32 / 2.0,
+    );
+
+    // information stuff
     draw_statistics(
         &gs.textures,
         &text_config,
