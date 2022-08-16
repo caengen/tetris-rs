@@ -496,6 +496,63 @@ impl TextParamsConfig {
     }
 }
 
+fn draw_game_type_menu(gs: &GameState, text_config: &TextParamsConfig) {
+    let game_title = &"GAME TYPE".to_string();
+    let (game_title_params, game_title_dims) = text_config.params_and_dims(game_title, 2.0);
+    let x = 4.0 * gs.scl;
+    let y = 3.5 * gs.scl;
+    draw_text_ex(game_title, x, y, game_title_params);
+    draw_border(
+        &gs.textures,
+        gs.scl,
+        vec2(3.0, 2.0),
+        f32::floor(game_title_dims.width / gs.scl) + 3.0,
+        2.0,
+    );
+
+    let option_a = &"A-TYPE".to_string();
+    let (option_a_params, option_a_dims) = text_config.params_and_dims(option_a, 2.0);
+    let x = 9.0 * gs.scl;
+    let y = 9.5 * gs.scl;
+    draw_text_ex(option_a, x, y, option_a_params);
+    draw_border(
+        &gs.textures,
+        gs.scl,
+        vec2(8.0, 8.0),
+        f32::floor(option_a_dims.width / gs.scl) + 3.0,
+        f32::floor(option_a_dims.height / gs.scl) + 1.0,
+    );
+
+    let option_b = &"B-TYPE".to_string();
+    let (option_b_params, option_b_dims) = text_config.params_and_dims(option_b, 2.0);
+    let x = 21.0 * gs.scl;
+    let y = 9.5 * gs.scl;
+    draw_text_ex(option_b, x, y, option_b_params);
+    draw_border(
+        &gs.textures,
+        gs.scl,
+        vec2(20.0, 8.0),
+        f32::floor(option_b_dims.width / gs.scl) + 3.0,
+        f32::floor(option_b_dims.height / gs.scl) + 1.0,
+    );
+
+    let music_title = &"MUSIC TYPE".to_string();
+    let (music_title_params, music_title_dims) = text_config.params_and_dims(music_title, 2.0);
+    let x = 4.0 * gs.scl;
+    let y = 17.0 * gs.scl;
+    draw_text_ex(music_title, x, y, music_title_params);
+    draw_border(
+        &gs.textures,
+        gs.scl,
+        vec2(3.0, 15.0),
+        f32::floor(music_title_dims.width / gs.scl) + 3.0,
+        f32::floor(music_title_dims.height / gs.scl) + 2.0,
+    );
+
+    let music_options = vec!["MUSIC - 1", "MUSIC - 2", "MUSIC - 3", "OFF"];
+    music_options.iter().enumerate().for_each(|(i, o)| {});
+}
+
 fn draw_title(gs: &GameState, text_config: &TextParamsConfig) {
     let title = &"TETRIS".to_string();
     let (title_params, title_dims) = text_config.params_and_dims(title, 8.0);
@@ -525,6 +582,7 @@ pub fn draw(gs: &GameState) {
     match gs.game_mode {
         GameMode::Title => draw_title(gs, &text_config),
         GameMode::Play | GameMode::Pause => draw_play(gs, &text_config),
+        GameMode::GameTypeMenu => draw_game_type_menu(gs, &text_config),
         _ => {}
     }
 }

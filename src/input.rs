@@ -1,7 +1,7 @@
 use crate::{
     components::{
-        get_game_state, get_level_gravity_max, GameMode, Ghost, AUTO_SHIFT_DELAY,
-        HARD_DROP_GRAVITY, LOCK_DELAY, SOFT_DROP_GRAVITY,
+        get_game_state, get_level_gravity_max, GameMode, GameModeMenuSelection, Ghost,
+        AUTO_SHIFT_DELAY, HARD_DROP_GRAVITY, LOCK_DELAY, SOFT_DROP_GRAVITY,
     },
     spawner::{drain_next, reset_transform},
 };
@@ -40,14 +40,55 @@ pub fn input(gs: &mut GameState) {
     match gs.game_mode {
         GameMode::Play => play_input(gs),
         GameMode::Pause => pause_input(gs),
-        GameMode::Title => title_input(gs),
+        GameMode::Title | GameMode::GameTypeMenu => menu_input(gs),
         _ => {}
     }
 }
 
-fn title_input(gs: &mut GameState) {
-    if is_key_pressed(KeyCode::Space) || is_key_pressed(KeyCode::Enter) {
-        gs.game_mode = GameMode::Play;
+fn menu_input(gs: &mut GameState) {
+    match gs.game_mode {
+        GameMode::Title => {
+            if is_key_pressed(KeyCode::Space) || is_key_pressed(KeyCode::Enter) {
+                gs.game_mode = GameMode::GameTypeMenu;
+            }
+        }
+        GameMode::GameTypeMenu => {
+            if is_key_pressed(KeyCode::Up) || is_key_pressed(KeyCode::Down) {
+                if gs.menu_selection.sub_menu == GameModeMenuSelection::GameType {
+                    gs.menu_selection.sub_menu = GameModeMenuSelection::MusicType;
+                } else {
+                    gs.menu_selection.sub_menu = GameModeMenuSelection::GameType;
+                }
+            }
+            if is_key_pressed(KeyCode::Left) {
+                match gs.menu_selection.sub_menu {
+                    GameModeMenuSelection::GameType => {
+                        gs.menu_selection.game_type =
+                            usize::min(0, gs.menu_selection.game_type - 1);
+                    }
+                    GameModeMenuSelection::MusicType => {
+                        gs.menu_selection.music_type =
+                            usize::min(0, gs.menu_selection.music_type - 1);
+                    }
+                }
+            }
+            if is_key_pressed(KeyCode::Right) {
+                match gs.menu_selection.sub_menu {
+                    GameModeMenuSelection::GameType => {
+                        gs.menu_selection.game_type =
+                            usize::min(0, gs.menu_selection.game_type + 1);
+                    }
+                    GameModeMenuSelection::MusicType => {
+                        gs.menu_selection.music_type =
+                            usize::min(0, gs.menu_selection.music_type + 1);
+                    }
+                }
+            }
+            if is_key_pressed(KeyCode::Enter) {
+                gs.game_mode = GameMode::Play;
+            }
+        }
+        _ => {}
     }
 }
 

@@ -165,7 +165,7 @@ fn window_conf() -> window::Conf {
 async fn main() {
     rand::srand(macroquad::miniquad::date::now() as u64);
 
-    let mut gs = get_game_state(GameMode::Title);
+    let mut gs = get_game_state(GameMode::GameTypeMenu);
     let blocks_texture: Texture2D = load_texture("assets/blocks.png").await.unwrap();
     let font = load_ttf_font("assets/visitor.ttf").await.unwrap();
     gs.textures = blocks_texture;

@@ -17,6 +17,18 @@ pub enum GameMode {
     Demo,
 }
 
+#[derive(PartialEq)]
+pub enum GameModeMenuSelection {
+    GameType,
+    MusicType,
+}
+
+pub struct MenuSelection {
+    pub game_type: usize,
+    pub music_type: usize,
+    pub sub_menu: GameModeMenuSelection,
+}
+
 //colors
 pub const DARK: Color = color_u8!(49, 47, 40, 255);
 pub const LIGHT: Color = color_u8!(218, 216, 209, 255);
@@ -146,6 +158,7 @@ pub struct ScorePopup {
 }
 
 pub struct GameState {
+    pub menu_selection: MenuSelection,
     pub debug: bool,
     pub scl: f32,
     pub placed_blocks: Vec<Option<Block>>,
@@ -184,6 +197,11 @@ pub fn get_game_state(mode: GameMode) -> GameState {
     let next = spawner::random_tetrominos(&tetrominos, 10);
     let current = spawner::spawn_tetromino(&tetrominos);
     GameState {
+        menu_selection: MenuSelection {
+            game_type: 0,
+            music_type: 1,
+            sub_menu: GameModeMenuSelection::GameType,
+        },
         debug: false,
         scl: 0.0,
         placed_blocks: vec![None; (WELL_WIDTH * WELL_HEIGHT) as usize],
