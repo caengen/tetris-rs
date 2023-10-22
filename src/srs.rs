@@ -5,6 +5,7 @@
 use super::{collision::can_translate, rel_xy_idx, Block, Ghost, Tetromino, TetrominoType};
 use macroquad::prelude::{const_vec2, debug, vec2, Mat3, Mat4, Vec2};
 
+// geez these mat3s are ugly
 fn mat3_clockwise_rot(mat: &Mat3) -> Mat3 {
     let col = mat.to_cols_array();
     Mat3::from_cols_array(&[
@@ -12,7 +13,6 @@ fn mat3_clockwise_rot(mat: &Mat3) -> Mat3 {
     ])
 }
 
-/*
 fn mat3_counter_clockwise_rot(m_a: &Mat3) -> Mat3 {
     let col = m_a.to_cols_array();
     let m_b = Mat3::from_cols_array(&[
@@ -21,8 +21,8 @@ fn mat3_counter_clockwise_rot(m_a: &Mat3) -> Mat3 {
 
     m_b
 }
- */
 
+// why did i use these crazy af structs for this...
 fn mat4_clockwise_rot(mat: &Mat4) -> Mat4 {
     let col = mat.to_cols_array();
     Mat4::from_cols_array(&[
@@ -31,11 +31,28 @@ fn mat4_clockwise_rot(mat: &Mat4) -> Mat4 {
     ])
 }
 
-pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mut Ghost) {
+fn mat4_counter_clockwise_rot(mat: &Mat4) -> Mat4 {
+    let col = mat.to_cols_array();
+    Mat4::from_cols_array(&[
+        col[12], col[8], col[4], col[0], col[13], col[9], col[5], col[1], col[14], col[10], col[6],
+        col[2], col[15], col[11], col[7], col[3],
+    ])
+}
+
+pub fn rotate(
+    clockwise: bool,
+    tetromino: &mut Tetromino,
+    placed: &Vec<Option<Block>>,
+    ghost: &mut Ghost,
+) {
     match tetromino.kind {
         TetrominoType::I => {
             let mut new_tetromino = tetromino.clone();
-            new_tetromino.mat4 = mat4_clockwise_rot(&tetromino.mat4);
+            new_tetromino.mat4 = if clockwise {
+                mat4_clockwise_rot(&tetromino.mat4)
+            } else {
+                mat4_counter_clockwise_rot(&tetromino.mat4)
+            };
             if can_translate(&new_tetromino, placed, &new_tetromino.pos) {
                 tetromino.mat4 = new_tetromino.mat4;
                 tetromino.rot_index = (tetromino.rot_index + 1) % 4;
@@ -64,7 +81,11 @@ pub fn rotate(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mu
         TetrominoType::O => {}
         _ => {
             let mut new_tetromino = tetromino.clone();
-            new_tetromino.mat = mat3_clockwise_rot(&tetromino.mat);
+            new_tetromino.mat = if clockwise {
+                mat3_clockwise_rot(&tetromino.mat)
+            } else {
+                mat3_counter_clockwise_rot(&tetromino.mat)
+            };
             // test 1
             if can_translate(&new_tetromino, placed, &new_tetromino.pos) {
                 tetromino.mat = new_tetromino.mat;

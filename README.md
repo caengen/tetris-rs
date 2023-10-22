@@ -12,17 +12,18 @@ _(Press `G` in-game for debug mode.)_
 
 ### Keybindings
 
-| Key   | Action           |
-| ----- | ---------------- |
-| Left  | Move left        |
-| Right | Move right       |
-| Up    | Rotate clockwise |
-| Down  | Soft drop        |
-| Space | Hard drop        |
-| C     | Hold tetromino   |
-| P     | Pause game       |
-| R     | Reset game       |
-| G     | Debugger         |
+| Key   | Action                   |
+| ----- | ------------------------ |
+| Left  | Move left                |
+| Right | Move right               |
+| Up    | Rotate clockwise         |
+| Z     | Rotate counter clockwise |
+| Down  | Soft drop                |
+| Space | Hard drop                |
+| C     | Hold tetromino           |
+| P     | Pause game               |
+| R     | Reset game               |
+| G     | Debugger                 |
 
 ### Implementation
 
@@ -37,7 +38,7 @@ _(Press `G` in-game for debug mode.)_
 - [x] Super Rotation System (SRS)
 - [x] Initial Hold System (IHS)
 - [ ] Initial Rotation System (IRS) 🤔?
-- [ ] Counter-clockwise rotation (Z key?)
+- [x] Counter-clockwise rotation
 - [x] Frame count based timers
 - [x] Soft drop
 - [x] Hard drop

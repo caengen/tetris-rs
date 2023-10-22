@@ -124,10 +124,16 @@ pub fn play_input(gs: &mut GameState) {
         }
         gs.last_input = FrameInput::Move;
     }
+
+    // only allow on rotation per frame
     if is_key_pressed(KeyCode::Up) {
-        srs::rotate(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
+        srs::rotate(true, &mut gs.current, &gs.placed_blocks, &mut gs.ghost);
+        gs.last_input = FrameInput::Rotate;
+    } else if is_key_pressed(KeyCode::Z) {
+        srs::rotate(false, &mut gs.current, &gs.placed_blocks, &mut gs.ghost);
         gs.last_input = FrameInput::Rotate;
     }
+
     if is_key_down(KeyCode::Down) {
         gs.gravity.max = SOFT_DROP_GRAVITY;
     }
