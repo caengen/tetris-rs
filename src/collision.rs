@@ -145,3 +145,37 @@ pub fn completed_lines(placed: &Vec<Option<Block>>) -> Vec<usize> {
 
     completed
 }
+
+pub fn surrounded_by_neighbours(placed: &Vec<Option<Block>>, x: usize, y: usize) -> bool {
+    let mut neighbours = 0;
+    if x > 0 {
+        let idx = xy_idx(x as f32 - 1.0, y as f32);
+        match placed[idx] {
+            Some(_) => neighbours += 1,
+            None => {}
+        }
+    }
+    if x < WELL_WIDTH - 1 {
+        let idx = xy_idx(x as f32 + 1.0, y as f32);
+        match placed[idx] {
+            Some(_) => neighbours += 1,
+            None => {}
+        }
+    }
+    if y > 0 {
+        let idx = xy_idx(x as f32, y as f32 - 1.0);
+        match placed[idx] {
+            Some(_) => neighbours += 1,
+            None => {}
+        }
+    }
+    if y < WELL_HEIGHT - 1 {
+        let idx = xy_idx(x as f32, y as f32 + 1.0);
+        match placed[idx] {
+            Some(_) => neighbours += 1,
+            None => {}
+        }
+    }
+
+    neighbours == 4
+}

@@ -145,6 +145,11 @@ pub struct ScorePopup {
     pub creation: usize,
 }
 
+pub enum FrameInput {
+    None,
+    Move,
+    Rotate,
+}
 pub struct GameState {
     pub debug: bool,
     pub scl: f32,
@@ -154,6 +159,7 @@ pub struct GameState {
     pub ghost: Ghost,
     pub tetrominos: Vec<Tetromino>,
     pub last_update: f64,
+    pub last_input: FrameInput,
     pub score: Score,
     pub key_info: KeyInfo,
     pub gravity: Gravity,
@@ -219,5 +225,6 @@ pub fn get_game_state(mode: GameMode) -> GameState {
         },
         line_clear: None,
         game_mode: mode,
+        last_input: FrameInput::None,
     }
 }

@@ -1,6 +1,6 @@
 use crate::{
     components::{
-        get_game_state, get_level_gravity_max, GameMode, Ghost, AUTO_SHIFT_DELAY,
+        get_game_state, get_level_gravity_max, FrameInput, GameMode, Ghost, AUTO_SHIFT_DELAY,
         HARD_DROP_GRAVITY, LOCK_DELAY, SOFT_DROP_GRAVITY,
     },
     spawner::{drain_next, reset_transform},
@@ -59,6 +59,7 @@ fn pause_input(gs: &mut GameState) {
 
 pub fn play_input(gs: &mut GameState) {
     let time = get_time();
+    gs.last_input = FrameInput::None;
 
     if is_key_released(KeyCode::Left) {
         gs.key_info.auto_shift = (None, time);
@@ -89,6 +90,7 @@ pub fn play_input(gs: &mut GameState) {
                 }
             }
         }
+        gs.last_input = FrameInput::Move;
     }
 
     if is_key_released(KeyCode::Right) {
@@ -120,9 +122,11 @@ pub fn play_input(gs: &mut GameState) {
                 }
             }
         }
+        gs.last_input = FrameInput::Move;
     }
     if is_key_pressed(KeyCode::Up) {
         srs::rotate(&mut gs.current, &gs.placed_blocks, &mut gs.ghost);
+        gs.last_input = FrameInput::Rotate;
     }
     if is_key_down(KeyCode::Down) {
         gs.gravity.max = SOFT_DROP_GRAVITY;
