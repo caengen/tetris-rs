@@ -23,3 +23,24 @@ _(Press `G` in-game for debug mode.)_
 | P     | Pause game       |
 | R     | Reset game       |
 | G     | Debugger         |
+
+### Implementation
+
+- [x] T-Spin
+- [x] Next piece view
+- [x] Hold piece view
+- [x] Score tracker
+
+- [x] Holding
+- [x] Wall kicks
+- [x] Delayed Auto-Shift
+- [x] Super Rotation System (SRS)
+- [x] Initial Hold System (IHS)
+- [ ] Initial Rotation System (IRS) 🤔?
+- [ ] Counter-clockwise rotation (Z key?)
+- [x] Frame count based timers
+- [x] Soft drop
+- [x] Hard drop
+- [x] Soft locking
+- [-] Floor kick. Need to fix infinity kicking
+- [x] Ghost piece
