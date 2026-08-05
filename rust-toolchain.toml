@@ -1,0 +1,10 @@
+# macroquad 0.3.23 pulls in wasm-bindgen 0.2.82, and rustc 1.82 and newer refuse
+# to compile it: "older versions of the `wasm-bindgen` crate are incompatible
+# with current versions of Rust". 1.81.0 is the last toolchain that builds this
+# lockfile, so the compiler is pinned alongside the crates rather than tracking
+# whatever the runner ships.
+#
+# Upgrading macroquad is what removes the need for this.
+[toolchain]
+channel = "1.81.0"
+targets = ["wasm32-unknown-unknown"]

@@ -2,41 +2,37 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>tetris.rs</title>
     <style>
         html, body {
-            background: rgba(49,47,40, 1);
-        }
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem 1rem;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-        }
-        /* The game takes its scale from width alone
-           (scl = screen_width() / GAME_WIDTH) and lays out GAME_HEIGHT down,
-           so the canvas has to be 32:30 or the bottom of the well is cut off.
-           miniquad sizes its backing store from this CSS box. */
-        canvas {
-            padding: 0px;
-            width: min(100%, calc(100dvh * 32 / 30));
-            aspect-ratio: 32 / 30;
-            border-radius: 1rem;
+            margin: 0;
+            height: 100%;
+            /* The game's own dark, so the page and the canvas agree. */
+            background: rgb(49 47 40);
         }
 
-        @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+        body {
+            display: grid;
+            place-items: center;
+        }
+
+        /* Fill the window horizontally.
+
+           The game takes its scale from width alone
+           (scl = screen_width() / GAME_WIDTH) and then lays out GAME_HEIGHT
+           downward, so the box has to be 32:30 or the bottom of the well is cut
+           off rather than scaled to fit. miniquad sizes its WebGL backing store
+           from this CSS box, so the render is native resolution at any size.
+
+           The min() caps by height as well: at 32:30 a full-width canvas is
+           taller than a landscape window, and without it the page would scroll
+           vertically on any normal desktop. */
+        canvas {
+            width: min(100%, calc(100dvh * 32 / 30 - 8px));
+            aspect-ratio: 32 / 30;
+            border: 2px solid #fff;
+            box-sizing: border-box;
         }
     </style>
 </head>
