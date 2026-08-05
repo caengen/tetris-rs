@@ -1,4 +1,4 @@
-use super::spawner;
+use crate::spawner;
 use macroquad::{
     prelude::{color_u8, vec2, Color, KeyCode, Mat3, Mat4, Texture2D, Vec2},
     text::Font,

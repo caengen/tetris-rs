@@ -1,10 +1,7 @@
-use std::collections::HashMap;
-
-use crate::components::{
-    GameMode, ScorePopup, ENTRY_DELAY, LINE_CLEAR_DELAY, PIXELS_PER_UNIT, SCORE_TIMEOUT,
-};
-
-use super::{
+use crate::{
+    components::{
+        GameMode, ScorePopup, ENTRY_DELAY, LINE_CLEAR_DELAY, PIXELS_PER_UNIT, SCORE_TIMEOUT,
+    },
     Block, GameState, Score, Tetromino, TetrominoType, DARK, GAME_HEIGHT, GAME_WIDTH, LIGHT,
     WELL_CELL, WELL_CELL_GAP, WELL_HEIGHT, WELL_WIDTH,
 };
@@ -16,6 +13,7 @@ use macroquad::{
     },
     text::{draw_text_ex, Font, TextDimensions, TextParams},
 };
+use std::collections::HashMap;
 
 pub fn draw_well(offset: Vec2, scl: f32) {
     for ht in 0..WELL_HEIGHT {

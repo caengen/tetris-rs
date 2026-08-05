@@ -1,15 +1,13 @@
 use crate::{
+    collision::can_translate_horizontally,
     components::{
         get_game_state, get_level_gravity_max, FrameInput, GameMode, Ghost, AUTO_SHIFT_DELAY,
         HARD_DROP_GRAVITY, LOCK_DELAY, SOFT_DROP_GRAVITY,
     },
     spawner::{drain_next, reset_transform},
+    srs, Block, GameState, Tetromino, AUTO_SHIFT_TIMEOUT,
 };
 
-use super::{
-    collision::can_translate_horizontally, srs, Block, GameState, Tetromino, AUTO_SHIFT_TIMEOUT,
-    WELL_WIDTH,
-};
 use macroquad::prelude::{get_time, is_key_down, is_key_pressed, is_key_released, vec2, KeyCode};
 
 fn move_left(tetromino: &mut Tetromino, placed: &Vec<Option<Block>>, ghost: &mut Ghost) {

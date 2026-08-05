@@ -1,6 +1,4 @@
-use crate::components::LOCK_DELAY;
-
-use super::{xy_idx, Block, Tetromino, WELL_HEIGHT, WELL_WIDTH};
+use crate::{xy_idx, Block, Tetromino, WELL_HEIGHT, WELL_WIDTH};
 use macroquad::prelude::{debug, Vec2};
 
 pub fn wall_collision(tetromino: &Tetromino, pos: &Vec2) -> bool {

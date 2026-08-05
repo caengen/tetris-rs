@@ -2,7 +2,7 @@
  Super Rotation System (SRS)
  Tetris Guideline Standard Compliant
 */
-use super::{collision::can_translate, rel_xy_idx, Block, Ghost, Tetromino, TetrominoType};
+use crate::{collision::can_translate, rel_xy_idx, Block, Ghost, Tetromino, TetrominoType};
 use macroquad::prelude::{const_vec2, debug, vec2, Mat3, Mat4, Vec2};
 
 // geez these mat3s are ugly

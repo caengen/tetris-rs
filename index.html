@@ -16,10 +16,14 @@
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
         }
+        /* The game takes its scale from width alone
+           (scl = screen_width() / GAME_WIDTH) and lays out GAME_HEIGHT down,
+           so the canvas has to be 32:30 or the bottom of the well is cut off.
+           miniquad sizes its backing store from this CSS box. */
         canvas {
             padding: 0px;
-            height: 512px;
-            width: 480px;
+            width: min(100%, calc(100dvh * 32 / 30));
+            aspect-ratio: 32 / 30;
             border-radius: 1rem;
         }
 
@@ -39,8 +43,19 @@
 
 <body>
     <canvas id="glcanvas" tabindex='1'></canvas>
-    <!-- Minified and statically hosted version of https://github.com/not-fl3/macroquad/blob/master/js/mq_js_bundle.js -->
-    <script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script>
+    <!--
+        Vendored from macroquad v0.3.24 and pinned deliberately:
+        https://raw.githubusercontent.com/not-fl3/macroquad/v0.3.24/js/mq_js_bundle.js
+
+        This used to load the unversioned copy at not-fl3.github.io, which has
+        since moved to the 0.4 line. That bundle has not created its WebGL
+        context by the time a 0.3 binary calls glGetIntegerv, so the game died
+        on the first frame with "Cannot read properties of undefined (reading
+        'getParameter')". macroquad in Cargo.lock is 0.3.23.
+
+        Re-pin this to match if the crate is ever upgraded.
+    -->
+    <script src="js/mq_js_bundle.js"></script>
     <script>load("bin/tetris-rs.wasm");</script>
 </body>
 
